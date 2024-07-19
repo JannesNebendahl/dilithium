@@ -4,11 +4,13 @@ import 'package:dilithium/dilithium.dart';
 import 'package:dilithium/src/impl/dart_utils.dart';
 import 'package:pointycastle/digests/shake.dart';
 
+/// Represents a polynomial with integer coefficients modulo `Dilithium.Q`.
 class Poly {
+  /// coefficients of the polynomial
   List<int> coef;
 
-  Poly(int n) : coef = List.filled(n, 0) {
-  }
+  /// creates a polynomial with `n` coefficients initialized to 0.
+  Poly(int n) : coef = List.filled(n, 0) {}
 
   /// Adds two polynomials element-wise modulo `Dilithium.Q`.
   ///
@@ -83,7 +85,7 @@ class Poly {
     } else if (eta == 4) {
       POLY_UNIFORM_ETA_NBLOCKS = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
     } else {
-      throw ArgumentError('Illegal eta: $eta');
+      throw ArgumentError('Illegal eta: $eta (eta must be 2 or 4)');
     }
 
     int ctr;
@@ -327,16 +329,9 @@ class Poly {
 
   /// Performs power rounding on the coefficients of the polynomial.
   ///
-  /// Power rounding splits each coefficient `a` of the polynomial `coef`
-  /// into two parts based on the value of `Dilithium.D`:
-  /// - `pr[1].coef[i]` is computed as `(a + (1 << (Dilithium.D - 1)) - 1) >> Dilithium.D`
-  /// - `pr[0].coef[i]` is computed as `a - (pr[1].coef[i] << Dilithium.D)`
-  ///
-  /// Returns a list of two polynomials, where:
-  /// - `pr[0]` contains the lower bits after power rounding.
-  /// - `pr[1]` contains the upper bits after power rounding.
-  ///
-  /// Each polynomial in the returned list has `Dilithium.N` coefficients.
+  /// Returns: A list containing two polynomials.
+  /// - index 0: The polynomial containing the rounded coefficients.
+  /// - index 1: The polynomial containing the remaining coefficients.
   List<Poly> powerRound() {
     List<Poly> pr = [Poly(Dilithium.N), Poly(Dilithium.N)];
 
@@ -530,22 +525,16 @@ class Poly {
     return pre;
   }
 
-  /// Decomposes the polynomial `this` based on `gamma2` and returns two polynomials `pr`.
-  ///
-  /// For each coefficient `a` in `coef`:
-  /// - Computes `a1 = (a + 127) >> 7`.
-  /// - Adjusts `a1` based on `gamma2`:
-  ///   - If `gamma2` is (Dilithium.Q - 1) / 32, further adjusts `a1`.
-  ///   - If `gamma2` is (Dilithium.Q - 1) / 88, further adjusts `a1`.
-  ///
+
+  /// Decomposes each coefficient of the polynomial into two parts based on the value of gamma2.  
+  /// 
   /// Parameters:
   /// - `gamma2`: The value of gamma2 (either (Dilithium.Q - 1) / 32 or (Dilithium.Q - 1) / 88).
-  ///
-  /// Returns:
-  /// - A list `pr` containing two polynomials:
-  ///   - `pr[0]`: The polynomial with adjusted coefficients.
-  ///   - `pr[1]`: The polynomial with `a1` coefficients.
-  ///
+  /// 
+  /// Returns: A list containing two polynomials.
+  /// - index 0: The rounded remainder polynomial
+  /// - index 1: The large polynomial part
+  /// 
   /// Throws [ArgumentError] if `gamma2` is neither (Dilithium.Q - 1) / 32 nor (Dilithium.Q - 1) / 88.
   List<Poly> decompose(final int gamma2) {
     List<Poly> pr = [Poly(Dilithium.N), Poly(Dilithium.N)];

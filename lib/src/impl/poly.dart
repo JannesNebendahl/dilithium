@@ -77,7 +77,7 @@ class Poly {
   /// - A polynomial with coefficients in the range determined by `eta`.
   ///
   /// Throws:
-  /// - `ArgumentError` if `eta` is not 2 or 4.
+  /// - `IllegalEta` if `eta` is not 2 or 4.
   static Poly genRandom(Uint8List rho, int eta, int nonce) {
     int POLY_UNIFORM_ETA_NBLOCKS;
     if (eta == 2) {
@@ -85,7 +85,7 @@ class Poly {
     } else if (eta == 4) {
       POLY_UNIFORM_ETA_NBLOCKS = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
     } else {
-      throw ArgumentError('Illegal eta: $eta (eta must be 2 or 4)');
+      throw IllegalEta(eta);
     }
 
     int ctr;
@@ -379,7 +379,7 @@ class Poly {
   /// - Packs these differences into `buf` in a format suitable for eta = 4. Each byte in `buf` holds two
   ///   differences encoded using bitwise operations.
   ///
-  /// Throws [ArgumentError] if `eta` is neither 2 nor 4.
+  /// Throws [IllegalEta] if `eta` is neither 2 nor 4.
   ///
   /// Parameters:
   /// - `eta`: The value of eta (2 or 4).
@@ -409,7 +409,7 @@ class Poly {
         buf[off + i] = (t[0] | (t[1] << 4)) & 0xFF;
       }
     } else {
-      throw ArgumentError("Illegal eta: $eta");
+      throw IllegalEta(eta);
     }
   }
 
@@ -471,7 +471,7 @@ class Poly {
   /// Returns:
   /// - A polynomial `pre` with coefficients sampled from the distribution Gamma1.
   ///
-  /// Throws [ArgumentError] if `gamma1` is not 2^17 or 2^19.
+  /// Throws [IllegalGamma1] if `gamma1` is not 2^17 or 2^19.
   static Poly genRandomGamma1(Uint8List seed, int nonce, int N, int gamma1) {
     Poly pre = Poly(N);
     Uint8List buf = Uint8List(Dilithium.POLY_UNIFORM_GAMMA1_NBLOCKS * Dilithium.STREAM256_BLOCKBYTES);
@@ -519,7 +519,7 @@ class Poly {
         pre.coef[2 * i + 1] = gamma1 - pre.coef[2 * i + 1];
       }
     } else {
-      throw ArgumentError("Invalid gamma1: $gamma1");
+      throw IllegalGamma1(gamma1);
     }
 
     return pre;
@@ -535,7 +535,7 @@ class Poly {
   /// - index 0: The rounded remainder polynomial
   /// - index 1: The large polynomial part
   /// 
-  /// Throws [ArgumentError] if `gamma2` is neither (Dilithium.Q - 1) / 32 nor (Dilithium.Q - 1) / 88.
+  /// Throws [IllegalGamma2] if `gamma2` is neither (Dilithium.Q - 1) / 32 nor (Dilithium.Q - 1) / 88.
   List<Poly> decompose(final int gamma2) {
     List<Poly> pr = [Poly(Dilithium.N), Poly(Dilithium.N)];
 
@@ -549,7 +549,7 @@ class Poly {
         a1 = (a1 * 11275 + (1 << 23)) >> 24;
         a1 ^= ((43 - a1) >> 31) & a1;
       } else {
-        throw ArgumentError("Invalid gamma2: $gamma2");
+        throw IllegalGamma2(gamma2);
       }
       pr[0].coef[i] = a - a1 * 2 * gamma2;
       pr[0].coef[i] -= (((Dilithium.Q - 1) ~/ 2 - pr[0].coef[i]) >> 31) & Dilithium.Q;
@@ -565,7 +565,7 @@ class Poly {
   /// - `buf`: The byte array where coefficients will be packed.
   /// - `off`: The offset in `buf` where packing should start.
   ///
-  /// Throws [ArgumentError] if `gamma2` is neither (Dilithium.Q - 1) / 88 nor (Dilithium.Q - 1) / 32.
+  /// Throws [IllegalGamma2] if `gamma2` is neither (Dilithium.Q - 1) / 88 nor (Dilithium.Q - 1) / 32.
   void w1pack(int gamma2, Uint8List buf, int off) {
     if (gamma2 == (Dilithium.Q - 1) / 88) {
       for (int i = 0; i < Dilithium.N / 4; i++) {
@@ -581,7 +581,7 @@ class Poly {
         buf[off + i] = (coef[2 * i + 0] | (coef[2 * i + 1] << 4)) & 0xFF;
       }
     } else {
-      throw ArgumentError("Invalid gamma2: $gamma2");
+      throw IllegalGamma2(gamma2);
     }
   }
 
@@ -614,7 +614,7 @@ class Poly {
   /// - `sign`: The byte array where coefficients will be packed.
   /// - `off`: The offset in `sign` where packing should start.
   ///
-  /// Throws [ArgumentError] if `gamma1` is neither 2^17 nor 2^19.
+  /// Throws [IllegalGamma1] if `gamma1` is neither 2^17 nor 2^19.
   void zpack(int gamma1, Uint8List sign, int off) {
     List<int> t = List.filled(4, 0);
 
@@ -651,7 +651,7 @@ class Poly {
         sign[off + 5 * i + 4] = (t[1] >> 12) & 0xFF;
       }
     } else {
-      throw ArgumentError("Invalid gamma1: $gamma1");
+      throw IllegalGamma1(gamma1);
     }
   }
 

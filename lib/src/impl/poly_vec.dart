@@ -17,10 +17,10 @@ class PolyVec {
 
   /// Adds another `PolyVec` to this one and returns the result.
   /// 
-  /// Throws an `ArgumentError` if the lengths of the two vectors do not match.
+  /// Throws an `PolyVectorLengthMismatch` if the lengths of the two vectors do not match.
   PolyVec add(PolyVec other) {
     if (other.length != length) {
-      throw ArgumentError('Lengths of PolyVec objects must match');
+      throw PolyVectorLengthMismatch(other.length, length);
     }
     final newPoly = List<Poly>.generate(poly.length, (i) => poly[i].add(other.poly[i]));
     return PolyVec._(newPoly);
@@ -28,10 +28,10 @@ class PolyVec {
 
   /// Subtracts another `PolyVec` from this one and returns the result.
   /// 
-  /// Throws an `ArgumentError` if the lengths of the two vectors do not match.
+  /// Throws an `PolyVectorLengthMismatch` if the lengths of the two vectors do not match.
   PolyVec sub(PolyVec other) {
     if (other.length != length) {
-      throw ArgumentError('Lengths of PolyVec objects must match');
+      throw PolyVectorLengthMismatch(other.length, length);
     }
     final newPoly = List<Poly>.generate(poly.length, (i) => poly[i].sub(other.poly[i]));
     return PolyVec._(newPoly);
@@ -50,10 +50,10 @@ class PolyVec {
   /// - A random `PolyVec` object.
   ///
   /// Throws:
-  /// - `ArgumentError` if `eta` is not 2 or 4.
+  /// - `IllegalEta` if `eta` is not 2 or 4.
   static PolyVec randomVec(Uint8List rho, int eta, int length, int nonce) {
     if (eta != 2 && eta != 4) {
-      throw ArgumentError('Illegal eta: $eta (eta must be 2 or 4)');
+      throw IllegalEta(eta);
     }
     PolyVec pv = PolyVec(length);
     for (int i = 0; i < length; i++) {
@@ -151,10 +151,10 @@ class PolyVec {
   /// - A random `PolyVec` object.
   /// 
   /// Throws:
-  /// - `ArgumentError` if `gamma1` is not 2^17 or 2^19.
+  /// - `IllegalGamma1` if `gamma1` is not 2^17 or 2^19.
   static PolyVec randomVecGamma1(Uint8List seed, int length, int gamma1, int nonce) {
     if(gamma1 != (1 << 17) && gamma1 != (1 << 19)) {
-      throw ArgumentError('Illegal gamma1: $gamma1 (gamma1 must be 2^17 or 2^19)');
+      throw IllegalGamma1(gamma1);
     }
 
     PolyVec z = PolyVec(length);

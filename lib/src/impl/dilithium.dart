@@ -226,7 +226,7 @@ class Dilithium {
 
     for (var j = k; j < spec.omega; j++) {
       if (sig[off + j] != 0) {
-        throw ArgumentError("Invalid signature");
+        throw InvalidSignature();
       }
     }
 

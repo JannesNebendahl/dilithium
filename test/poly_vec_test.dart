@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:dilithium/dilithium.dart';
 import 'package:test/test.dart';
 
+import 'test_helper_functions.dart';
+
 void main() {
 
   group('PolyVec', (){
@@ -161,19 +163,4 @@ void main() {
       expectPolyVecsAreEqual(expected, actual);
     });
   });
-}
-
-PolyVec mockPolyVec(List<List<int>> coef){
-  PolyVec pv = PolyVec(coef.length);
-  for(int i = 0; i < coef.length; i++){
-    pv.poly[i] = Poly(coef[i].length)..coef = coef[i];
-  }
-  return pv;
-}
-
-void expectPolyVecsAreEqual(PolyVec expected, PolyVec actual){
-  expect(actual.length, expected.length);
-  for(int i = 0; i < expected.length; i++){
-    expect(actual.poly[i].coef, expected.poly[i].coef);
-  }
 }

@@ -18,3 +18,4 @@ export 'src/interfaces/dilithium_private_key_spec.dart';
 export 'src/interfaces/dilithium_private_key.dart';
 export 'src/interfaces/dilithium_public_key_spec.dart';
 export 'src/interfaces/dilithium_public_key.dart';
+export 'src/interfaces/dilithium_exceptions.dart';

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/dart_utils.dart';
 import 'package:pointycastle/digests/shake.dart';
 
 /// Represents a polynomial with integer coefficients modulo `Dilithium.Q`.
@@ -26,7 +25,7 @@ class Poly {
   Poly add(Poly other) {
     Poly res = Poly(coef.length);
     for (int i = 0; i < coef.length; i++) {
-      res.coef[i] = (coef[i] + other.coef[i]) % Dilithium.Q;
+      res.coef[i] = _inRangeOfDilithiumQ(coef[i] + other.coef[i]);
     }
     return res;
   }
@@ -45,9 +44,20 @@ class Poly {
   Poly sub(Poly other) {
     Poly res = Poly(coef.length);
     for (int i = 0; i < coef.length; i++) {
-      res.coef[i] = (coef[i] - other.coef[i]) % Dilithium.Q;
+      res.coef[i] = _inRangeOfDilithiumQ(coef[i] - other.coef[i]);
     }
     return res;
+  }
+
+  // this method is used to realize the modulo operator in the java implementation of the library
+  int _inRangeOfDilithiumQ(int value) {
+    while(value >= Dilithium.Q) {
+      value -= Dilithium.Q;
+    }
+    while(value <= -Dilithium.Q){
+      value += Dilithium.Q;
+    }
+    return value;
   }
 
   /// Returns a string representation of the polynomial.
@@ -182,9 +192,11 @@ class Poly {
   /// Returns:
   /// - The reduced integer.
   static int montgomery_reduce(int a) {
-    int t0 = DartUtils.toJavaInt32(a * Dilithium.QINV & 0xFFFFFFFF);
-    int t1 = ((a - t0 * Dilithium.Q) >> 32) & 0xFFFFFFFF;
-    return DartUtils.toJavaInt32(t1);
+    int t;
+
+    t = (a * Dilithium.QINV).toSigned(32);
+    t = (((a - t * Dilithium.Q) >> 32) & 0xFFFFFFFF).toSigned(32);
+    return t;
   }
 
 
@@ -322,8 +334,7 @@ class Poly {
   }
 
   int _caddq(int a) {
-    a += Dilithium.Q;
-    a -= (a >> 30) * Dilithium.Q;
+    a += (a >> 31) & Dilithium.Q;
     return a;
   }
 

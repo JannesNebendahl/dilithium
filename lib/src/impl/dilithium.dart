@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/test_helper_functions.dart';
 import 'package:pointycastle/digests/shake.dart';
+import 'package:test/expect.dart';
 
 class Dilithium {
   static const int N = 256;

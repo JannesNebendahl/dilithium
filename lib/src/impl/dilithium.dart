@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/test_helper_functions.dart';
 import 'package:pointycastle/digests/shake.dart';
-import 'package:test/expect.dart';
 
 class Dilithium {
   static const int N = 256;
@@ -112,7 +110,7 @@ class Dilithium {
 
     List<PolyVec> A;
     if (prv is DilithiumPrivateKeyImpl) {
-      A = (prv as DilithiumPrivateKeyImpl).getA();
+      A = prv.getA();
     } else {
       A = expandA(prv.getRho(), spec.k, spec.l);
     }
@@ -124,7 +122,7 @@ class Dilithium {
 
     PolyVec s1, s2, t0;
     if (prv is DilithiumPrivateKeyImpl) {
-      A = (prv as DilithiumPrivateKeyImpl).getA();
+      A = prv.getA();
       s1 = prv.getS1Hat();
       s2 = prv.getS2Hat();
       t0 = prv.getT0Hat();

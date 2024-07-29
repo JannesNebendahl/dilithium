@@ -5,21 +5,21 @@ import 'package:dilithium/dilithium.dart';
 import 'package:test/test.dart';
 
 void main() {
-  Uint8List generateSeed(){
+  Uint8List randomSeed(){
     final random = Random.secure();
     return Uint8List.fromList(List<int>.generate(32, (_) => random.nextInt(256)));
   }
 
   void keygen(DilithiumParameterSpec spec){
-    final keyPair = Dilithium.generateKeyPair(spec, generateSeed());
+    final keyPair = Dilithium.generateKeyPair(spec, randomSeed());
 
     expect(keyPair.publicKey, isA<DilithiumPublicKey>());
     expect(keyPair.privateKey, isA<DilithiumPrivateKey>());
   }
 
   void signAndVerify(DilithiumParameterSpec spec){
-    final keyPair = Dilithium.generateKeyPair(spec, generateSeed());
-    final altKeyPair = Dilithium.generateKeyPair(spec, generateSeed());
+    final keyPair = Dilithium.generateKeyPair(spec, randomSeed());
+    final altKeyPair = Dilithium.generateKeyPair(spec, randomSeed());
 
     for(int i = 0; i < 10; i++){
       final message = Uint8List.fromList(List<int>.generate(i, (_) => i));
@@ -45,7 +45,7 @@ void main() {
   }
 
   void useDeserializedKeys(DilithiumParameterSpec spec){
-    final keyPair = Dilithium.generateKeyPair(spec, generateSeed());
+    final keyPair = Dilithium.generateKeyPair(spec, randomSeed());
     
     final message = Uint8List.fromList([0xA0, 0x16, 0xC9, 0x94]);
     final signature = Dilithium.sign(keyPair.privateKey, message);

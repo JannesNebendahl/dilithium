@@ -1,3 +1,5 @@
+[![Tests](https://github.com/JannesNebendahl/dilithium/actions/workflows/dart.yml/badge.svg)](https://github.com/JannesNebendahl/dilithium/actions/workflows/dart.yml)
+[![codecov](https://codecov.io/github/JannesNebendahl/dilithium/graph/badge.svg?token=22U0DA66BD)](https://codecov.io/github/JannesNebendahl/dilithium)  
 Dart implementation of the [Dilithium](https://www.pq-crystals.org/dilithium/) signature scheme, which supports all 3 security levels (2, 3, 5)
 
 ## Usage
@@ -34,8 +36,8 @@ In order to instantiate the keys from a byte representation, the `.deserialize(s
 Uint8List encodedPublicKey = keyPair.publicKey.serialize();
 Uint8List encodedPrivateKey = keyPair.privateKey.serialize();
 
-DilithiumPublicKey reinstantiatedPublicKey = DilithiumPublicKey.deserialize(DilithiumParameterSpec.LEVEL3, encodedPublicKey);
-DilithiumPrivateKey reinstantiatedPrivateKey = DilithiumPrivateKey.deserialize(DilithiumParameterSpec.LEVEL3, encodedPrivateKey);
+final reinstantiatedPk = DilithiumPublicKey.deserialize(DilithiumParameterSpec.LEVEL3, encodedPublicKey);
+final reinstantiatedSk = DilithiumPrivateKey.deserialize(DilithiumParameterSpec.LEVEL3, encodedPrivateKey);
 ```
 
 ## What is Dilithium

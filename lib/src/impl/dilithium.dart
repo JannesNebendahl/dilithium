@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/dilithium_private_key_impl.dart';
-import 'package:dilithium/src/impl/dilithium_public_key_impl.dart';
 import 'package:dilithium/src/impl/packing_utils.dart';
 import 'package:dilithium/src/impl/poly.dart';
 import 'package:dilithium/src/impl/poly_vec.dart';
@@ -104,39 +102,25 @@ class Dilithium {
     PolyVec s2hat = s2.ntt();
     PolyVec t0hat = res[0].ntt();
 
-    DilithiumPrivateKeyImpl prv = DilithiumPrivateKeyImpl(spec, rho, K, tr, s1, s2, res[0], prvbytes, A, s1hat, s2hat, t0hat);
-    DilithiumPublicKeyImpl pub = DilithiumPublicKeyImpl(spec, rho, res[1], pubbytes, A);
+    DilithiumPrivateKey prv = DilithiumPrivateKey(spec, rho, K, tr, s1, s2, res[0], prvbytes, A, s1hat, s2hat, t0hat);
+    DilithiumPublicKey pub = DilithiumPublicKey(spec, rho, res[1], pubbytes, A);
     return DilithiumKeyPair(pub, prv);
   }
 
   static Uint8List sign(DilithiumPrivateKey prv, Uint8List M) {
-    var spec = prv.getSpec();
+    var spec = prv.spec;
     var CRYPTO_BYTES = Utils.getSigLength(spec);
     var sig = Uint8List(CRYPTO_BYTES);
 
-    List<PolyVec> A;
-    if (prv is DilithiumPrivateKeyImpl) {
-      A = prv.getA();
-    } else {
-      A = expandA(prv.getRho(), spec.k, spec.l);
-    }
-
-    var conc = Utils.concat([prv.getTr(), M]);
+    var conc = Utils.concat([prv.tr, M]);
     var mu = Utils.mucrh(conc);
-    conc = Utils.concat([prv.getK(), mu]);
+    conc = Utils.concat([prv.K, mu]);
     var rhoprime = Utils.mucrh(conc);
-
-    PolyVec s1, s2, t0;
-    if (prv is DilithiumPrivateKeyImpl) {
-      A = prv.getA();
-      s1 = prv.getS1Hat();
-      s2 = prv.getS2Hat();
-      t0 = prv.getT0Hat();
-    } else {
-      s1 = prv.getS1().ntt();
-      s2 = prv.getS2().ntt();
-      t0 = prv.getT0().ntt();
-    }
+  
+    List<PolyVec> A = prv.A;
+    PolyVec s1 = prv.s1Hat;
+    PolyVec s2 = prv.s2Hat;
+    PolyVec t0 = prv.t0Hat;
 
     var kappa = 0;
     for (;;) {
@@ -192,14 +176,14 @@ class Dilithium {
   }
 
   static bool verify(DilithiumPublicKey pk, Uint8List sig, Uint8List M) {
-    var spec = pk.getSpec();
+    var spec = pk.spec;
     var CRYPTO_BYTES = Utils.getSigLength(spec);
 
     if (sig.length != CRYPTO_BYTES) {
       throw Exception("Bad signature");
     }
 
-    var t1 = pk.getT1();
+    var t1 = pk.t1;
 
     var off = 0;
     var c = Uint8List(SEEDBYTES);
@@ -240,17 +224,12 @@ class Dilithium {
       throw Exception("Bad signature");
     }
 
-    var mu = Utils.crh(pk.getEncoded());
+    var mu = Utils.crh(pk.serialize());
     mu = Utils.getSHAKE256Digest(MUBYTES, [mu, M]);
 
     var cp = generateChallenge(spec.tau, c);
 
-    List<PolyVec> A;
-    if (pk is DilithiumPublicKeyImpl) {
-      A = (pk as DilithiumPublicKeyImpl).getA();
-    } else {
-      A = expandA(pk.getRho(), spec.k, spec.l);
-    }
+    List<PolyVec> A = pk.A;
     z = z.ntt();
     var w = z.mulMatrixPointwiseMontgomery(A);
 

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/poly.dart';
+import 'package:dilithium/src/poly.dart';
 
 /// Represents a vector of `Poly` objects and provides various operations on them.
 class PolyVec {

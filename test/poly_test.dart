@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:dilithium/src/impl/dilithium.dart';
+import 'package:dilithium/src/dilithium.dart';
 import 'package:test/test.dart';
-import 'package:dilithium/src/impl/poly.dart';
+import 'package:dilithium/src/poly.dart';
 
 void main() {
 

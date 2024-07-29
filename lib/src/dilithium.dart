@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/packing_utils.dart';
-import 'package:dilithium/src/impl/poly.dart';
-import 'package:dilithium/src/impl/poly_vec.dart';
-import 'package:dilithium/src/impl/utils.dart';
+import 'package:dilithium/src/packing_utils.dart';
+import 'package:dilithium/src/poly.dart';
+import 'package:dilithium/src/poly_vec.dart';
+import 'package:dilithium/src/utils.dart';
 import 'package:pointycastle/digests/shake.dart';
 
 class Dilithium {
@@ -65,6 +65,18 @@ class Dilithium {
   ];
 
   static const int MUBYTES = 64;
+
+  static DilithiumKeyPair generateKeyPair_Level2(Uint8List seed) {
+    return generateKeyPair(DilithiumParameterSpec.LEVEL2, seed);
+  }
+
+  static DilithiumKeyPair generateKeyPair_Level3(Uint8List seed) {
+    return generateKeyPair(DilithiumParameterSpec.LEVEL3, seed);
+  }
+
+  static DilithiumKeyPair generateKeyPair_Level5(Uint8List seed) {
+    return generateKeyPair(DilithiumParameterSpec.LEVEL5, seed);
+  }
 
   static DilithiumKeyPair generateKeyPair(DilithiumParameterSpec spec, Uint8List seed) {
     Uint8List zeta = seed;

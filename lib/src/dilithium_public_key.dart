@@ -3,8 +3,8 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/impl/packing_utils.dart';
-import 'package:dilithium/src/impl/poly_vec.dart';
+import 'package:dilithium/src/packing_utils.dart';
+import 'package:dilithium/src/poly_vec.dart';
 
 class DilithiumPublicKey {
   final DilithiumParameterSpec _spec;

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/poly_vec.dart';
 
 class DilithiumPrivateKeyImpl implements DilithiumPrivateKey {
   final Uint8List _rho;

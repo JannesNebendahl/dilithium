@@ -1,6 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/dilithium_private_key_impl.dart';
+import 'package:dilithium/src/impl/dilithium_public_key_impl.dart';
+import 'package:dilithium/src/impl/packing_utils.dart';
+import 'package:dilithium/src/impl/poly.dart';
+import 'package:dilithium/src/impl/poly_vec.dart';
+import 'package:dilithium/src/impl/utils.dart';
 import 'package:pointycastle/digests/shake.dart';
 
 class Dilithium {

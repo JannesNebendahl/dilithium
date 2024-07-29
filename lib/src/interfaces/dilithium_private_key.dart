@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/poly_vec.dart';
 
 abstract class DilithiumPrivateKey {
   String getAlgorithm();

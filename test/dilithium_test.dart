@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/dilithium_private_key_impl.dart';
+import 'package:dilithium/src/impl/dilithium_public_key_impl.dart';
+import 'package:dilithium/src/impl/poly_vec.dart';
 import 'package:test/test.dart';
 
 import 'test_helper_functions.dart';

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:dilithium/dilithium.dart';
+import 'package:dilithium/src/impl/poly.dart';
+import 'package:dilithium/src/impl/poly_vec.dart';
 import 'package:test/test.dart';
 
 import 'test_helper_functions.dart';
@@ -112,74 +114,6 @@ void main() {
 
       expectPolyVecsAreEqual(expected, actual);
     });
-
-    /*
-    // Just used for debugging --> set Dilithium.N to 2 to use it
-    test('basicMulMatrixPointwiseMontgomery', (){
-      final pv = mockPolyVec([[1,2],[3,4],[-1,-3],[-2,-4]]);
-
-      List<PolyVec> M = [
-        mockPolyVec([[1,2],[3,4],[1,3],[2,4]]),
-        mockPolyVec([[-1,-2],[-3,-4],[-1,-3],[-2,-4]]),
-        mockPolyVec([[1,2],[3,4],[-1,-3],[-2,-4]]),
-        mockPolyVec([[-1,-2],[-3,-4],[1,3],[2,4]]),
-      ];
-
-      final expected = mockPolyVec([[-572960, 572960], [572960, -572960], [-1718880, -5156640], [1718880, 5156640]]);
-
-      final actual = pv.mulMatrixPointwiseMontgomery(M);
-
-      expectPolyVecsAreEqual(expected, actual);
-    });
-
-    test('debuggableMulMatrixPointwiseMontgomery', (){
-      final pv = mockPolyVec([
-        [2372355, 6976301],
-        [8491259, 2533761],
-        [4535680, 9559836],
-        [-1609553, -1510259]
-      ]);
-
-      List<PolyVec> M = [
-        mockPolyVec([
-          [5923948, 6131267],
-          [8321930, 4802324],
-          [6098312, 2598151],
-          [2956240, 1015062]
-        ]),
-        mockPolyVec([
-          [2155835, 4325414],
-          [5255854, 783334],
-          [6267931, 4110607],
-          [7813035, 4800914]
-        ]),
-        mockPolyVec([
-          [3150457, 2002377],
-          [6110908, 1885104],
-          [4362964, 8113759],
-          [3317696, 5209589]
-        ]),
-        mockPolyVec([
-          [5742411, 1792915],
-          [1160651, 5649676],
-          [1671962, 4292756],
-          [4797921, 6903870]
-        ]),
-      ];
-
-      final expected = mockPolyVec([
-        [-3495870, 2031513], 
-        [-3973726, 5629217], 
-        [-1149925, -1857569], 
-        [-3869379, -3481783]
-      ]);
-
-      final actual = pv.mulMatrixPointwiseMontgomery(M);
-
-      expectPolyVecsAreEqual(expected, actual);
-    });
-
-    */
 
     test('reduce', (){
       List<int> actualCoef = List<int>.generate(Dilithium.N, (index) => index + Dilithium.Q);

@@ -256,12 +256,12 @@ class Dilithium {
       h.poly[i] = Poly(N);
 
       if ((sig[off + spec.omega + i] & 0xFF) < k || (sig[off + spec.omega + i] & 0xFF) > spec.omega)
-        throw Exception("Bad signature");
+        throw InvalidSignature();
 
       for (var j = k; j < (sig[off + spec.omega + i] & 0xFF); j++) {
         /* Coefficients are ordered for strong unforgeability */
         if (j > k && (sig[off + j] & 0xFF) <= (sig[off + j - 1] & 0xFF))
-          throw Exception("Bad signature");
+          throw InvalidSignature();
         h.poly[i].coef[sig[off + j] & 0xFF] = 1;
       }
 
@@ -275,7 +275,7 @@ class Dilithium {
     }
 
     if (z.chknorm(spec.gamma1 - spec.beta)) {
-      throw Exception("Bad signature");
+      throw InvalidSignature();
     }
 
     var mu = Utils.crh(pk.serialize());
@@ -384,7 +384,7 @@ class Dilithium {
       a1 = (a1 * 11275 + (1 << 23)) >> 24;
       a1 ^= ((43 - a1) >> 31) & a1;
     } else {
-      throw Exception("Invalid gamma2: $gamma2");
+      throw IllegalGamma2(gamma2);
     }
     a0 = a - a1 * 2 * gamma2;
     a0 -= (((Dilithium.Q - 1) ~/ 2 - a0) >> 31) & Dilithium.Q;
@@ -404,7 +404,7 @@ class Dilithium {
       else
         return (a1 == 0) ? 43 : a1 - 1;
     } else {
-      throw Exception("Invalid gamma2: $gamma2");
+      throw IllegalGamma2(gamma2);
     }
   }
 

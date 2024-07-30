@@ -2,6 +2,8 @@
 [![codecov](https://codecov.io/github/JannesNebendahl/dilithium/graph/badge.svg?token=22U0DA66BD)](https://codecov.io/github/JannesNebendahl/dilithium)  
 Dart implementation of the [Dilithium](https://www.pq-crystals.org/dilithium/) signature scheme, which supports all 3 security levels (2, 3, 5)
 
+**Note AES Not Supported:** This Dart implementation of Dilithium does not support the AES variant. It only supports the SHAKE-based version of the algorithm.
+
 ## Usage
 
 ### Key Pair generation:
@@ -10,7 +12,7 @@ Uint8List randomSeed = Uint8List(Dilithium.SEEDBYTES);
 
 DilithiumKeyPair keyPair = Dilithium.generateKeyPair(DilithiumParameterSpec.LEVEL3, randomSeed);
 
-DilithiumPrivateKey sk = keyPair.publicKey;
+DilithiumPublicKey sk = keyPair.publicKey;
 DilithiumPrivateKey pk = keyPair.privateKey;
 ```
 Note that you must provide an algorithm parameter spec representing the desired security level - the above example uses level 3, but you can select 2 and 5 as well. The three parameter spec objects are declared as static fields on the DilithiumParameterSpec class. Alternatively, a static method, getSpecForSecurityLevel(), is provided on DilithiumParameterSpec, allowing you to easily retrieve the spec for a given level at runtime.

@@ -26,6 +26,13 @@ void main() {
       expectPolyVecsAreEqual(expected, actual);
     });
 
+    test('add throws PolyVectorLengthMismatch', (){
+      final pv1 = PolyVec(3);
+      final pv2 = PolyVec(4);
+
+      expect(() => pv1.add(pv2), throwsA(isA<PolyVectorLengthMismatch>()));
+    });
+
     test('sub', (){
       final pv1 = mockPolyVec([[4, 5, 6]]);
       final pv2 = mockPolyVec([[1, 2, 3]]);
@@ -34,6 +41,13 @@ void main() {
       PolyVec actual = pv1.sub(pv2);
 
       expectPolyVecsAreEqual(expected, actual);
+    });
+
+    test('sub throws PolyVectorLengthMismatch', (){
+      final pv1 = PolyVec(3);
+      final pv2 = PolyVec(4);
+
+      expect(() => pv1.sub(pv2), throwsA(isA<PolyVectorLengthMismatch>()));
     });
 
     test('randomVec', (){

@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  testing:
+  unittesting:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,21 @@ jobs:
         name: codecov-umbrella
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
+  
+  integration_testing:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 'stable'
+
+    - name: Install dependencies
+      run: dart pub get
+
+    - name: Run integration tests
+      run: dart test integration_test

@@ -6,7 +6,7 @@ Dart implementation of the [Dilithium](https://www.pq-crystals.org/dilithium/) s
 
 ### Key Pair generation:
 ```dart
-Uint8List randomSeed = Uint8List(32);
+Uint8List randomSeed = Uint8List(Dilithium.SEEDBYTES);
 
 DilithiumKeyPair keyPair = Dilithium.generateKeyPair(DilithiumParameterSpec.LEVEL3, randomSeed);
 

@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 void main() {
   Uint8List randomSeed(){
     final random = Random.secure();
-    return Uint8List.fromList(List<int>.generate(32, (_) => random.nextInt(256)));
+    return Uint8List.fromList(List<int>.generate(Dilithium.SEEDBYTES, (_) => random.nextInt(256)));
   }
 
   void keygen(DilithiumParameterSpec spec){
@@ -65,7 +65,7 @@ void main() {
     expect(Dilithium.verify(keyPair.publicKey, newSignature, newMessage), isTrue);
   }
 
-  group('End 2 End Tests', (){
+  group('Usage', (){
     group('Dilithium 2', (){
       final spec = DilithiumParameterSpec.LEVEL2;
 

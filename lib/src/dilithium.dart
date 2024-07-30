@@ -8,21 +8,46 @@ import 'package:dilithium/src/utils.dart';
 import 'package:pointycastle/digests/shake.dart';
 
 class Dilithium {
+  /// Number of coefficients in a polynomial
   static const int N = 256;
+
+  /// Prime modulus used in the field
   static const int Q = 8380417;
+
+  /// Modular inverse of Q modulo 2^32
   static const int QINV = 58728449; // q^(-1) mod 2^32
+
+  /// Dimension parameter used in the scheme
   static const int D = 13;
 
+  /// Number of bytes to store packed polynomials (T0)
   static const int POLYT0_PACKEDBYTES = 416;
+
+  /// Number of bytes to store packed polynomials (T1)
   static const int POLYT1_PACKEDBYTES = 320;
+
+  /// Number of bytes for seeds
   static const int SEEDBYTES = 32;
+
+  /// Number of bytes for hash output (using CRH function)
   static const int CRHBYTES = 32;
+
+  /// Rate parameter for SHAKE128 in bytes
   static const int SHAKE128_RATE = 168;
+
+  /// Rate parameter for SHAKE256 in bytes
   static const int SHAKE256_RATE = 136;
+
+  /// Block size in bytes for SHAKE128-based stream generation
   static const int STREAM128_BLOCKBYTES = SHAKE128_RATE;
+
+  /// Block size in bytes for SHAKE256-based stream generation
   static const int STREAM256_BLOCKBYTES = SHAKE256_RATE;
+
+  /// Number of blocks for generating uniform polynomials with parameter gamma1
   static const int POLY_UNIFORM_GAMMA1_NBLOCKS = ((576 + STREAM256_BLOCKBYTES - 1) ~/ STREAM256_BLOCKBYTES);
 
+  /// List of precomputed Zeta coefficients used in number theoretic transforms
   static const List<int> zetas = [
     0, 25847, -2608894, -518909, 237124, -777960, -876248, 466468,
     1826347, 2353451, -359251, -2091905, 3119733, -2884855, 3111497,
@@ -64,20 +89,17 @@ class Dilithium {
     1976782
   ];
 
+  /// Number of bytes for message digest (mu)
   static const int MUBYTES = 64;
 
-  static DilithiumKeyPair generateKeyPair_Level2(Uint8List seed) {
-    return generateKeyPair(DilithiumParameterSpec.LEVEL2, seed);
-  }
-
-  static DilithiumKeyPair generateKeyPair_Level3(Uint8List seed) {
-    return generateKeyPair(DilithiumParameterSpec.LEVEL3, seed);
-  }
-
-  static DilithiumKeyPair generateKeyPair_Level5(Uint8List seed) {
-    return generateKeyPair(DilithiumParameterSpec.LEVEL5, seed);
-  }
-
+  /// Generates a Dilithium key pair using the provided parameters and seed.
+  /// 
+  /// Parameters:
+  /// - `spec`: The parameters specification for Dilithium.
+  /// - `seed`: The seed for key generation.
+  /// 
+  /// Returns:
+  /// - A `DilithiumKeyPair` containing the public and private keys.
   static DilithiumKeyPair generateKeyPair(DilithiumParameterSpec spec, Uint8List seed) {
     Uint8List zeta = seed;
 
@@ -119,6 +141,14 @@ class Dilithium {
     return DilithiumKeyPair(pub, prv);
   }
 
+  /// Creates a Dilithium signature for the provided messages
+  /// 
+  /// Parameters:
+  /// - `prv`: The private key used for signing.
+  /// - `M`: The message to be signed.
+  /// 
+  /// Returns:
+  /// - The signature as a `Uint8List`.
   static Uint8List sign(DilithiumPrivateKey prv, Uint8List M) {
     var spec = prv.spec;
     var CRYPTO_BYTES = Utils.getSigLength(spec);
@@ -150,7 +180,7 @@ class Dilithium {
       s.update(sig, 0, res[1].length * PackingUtils.getPolyW1PackedBytes(spec.gamma2));
       s.doOutput(sig, 0, SEEDBYTES);
 
-      var cp = generateChallenge(spec.tau, sig);
+      var cp = _generateChallenge(spec.tau, sig);
       cp = cp.ntt();
       z = s1.pointwiseMontgomery(cp);
       z.invnttTomont();
@@ -177,7 +207,7 @@ class Dilithium {
       w0 = w0.add(h);
       w0.caddq();
 
-      var hints = makeHints(spec.gamma2, w0, res[1]);
+      var hints = _makeHints(spec.gamma2, w0, res[1]);
       if (hints.cnt > spec.omega) {
         continue;
       }
@@ -187,12 +217,24 @@ class Dilithium {
     }
   }
 
+  /// Verifies a Dilithium signature using the provided public key and message.
+  /// 
+  /// Parameters:
+  /// - `pk`: The public key used for verification.
+  /// - `sig`: The signature to be verified.
+  /// - `M`: The message that was signed.
+  /// 
+  /// Returns:
+  /// - `true` if the signature is valid, `false` otherwise.
+  /// 
+  /// Throws:
+  /// - `InvalidSignature` exception if the signature length is invalid.
   static bool verify(DilithiumPublicKey pk, Uint8List sig, Uint8List M) {
     var spec = pk.spec;
     var CRYPTO_BYTES = Utils.getSigLength(spec);
 
     if (sig.length != CRYPTO_BYTES) {
-      throw Exception("Bad signature");
+      throw InvalidSignature();
     }
 
     var t1 = pk.t1;
@@ -239,7 +281,7 @@ class Dilithium {
     var mu = Utils.crh(pk.serialize());
     mu = Utils.getSHAKE256Digest(MUBYTES, [mu, M]);
 
-    var cp = generateChallenge(spec.tau, c);
+    var cp = _generateChallenge(spec.tau, c);
 
     List<PolyVec> A = pk.A;
     z = z.ntt();
@@ -269,6 +311,15 @@ class Dilithium {
     return true;
   }
 
+  /// Expands the matrix `A` for the given parameters.
+  /// 
+  /// Parameters:
+  /// - `rho`: The seed used for generating the matrix.
+  /// - `k`: The number of rows in the matrix.
+  /// - `l`: The number of columns in the matrix.
+  /// 
+  /// Returns:
+  /// - The generated matrix `A` as a list of `PolyVec` objects.
   static List<PolyVec> expandA(Uint8List rho, int k, int l) {
     List<PolyVec> A = List.generate(k, (_) => PolyVec(l));
     for (int i = 0; i < k; i++) {
@@ -279,6 +330,15 @@ class Dilithium {
     return A;
   }
 
+  /// Uses a hint to adjust the polynomial vector `u`.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for adjustment.
+  /// - `u`: The polynomial vector to be adjusted.
+  /// - `h`: The hint used for adjustment.
+  /// 
+  /// Returns:
+  /// - The adjusted polynomial vector.
   static PolyVec _useHintPolyVec(int gamma2, PolyVec u, PolyVec h) {
     PolyVec res = PolyVec(u.length);
     for (int i = 0; i < res.length; i++) {
@@ -287,6 +347,15 @@ class Dilithium {
     return res;
   }
 
+  /// Uses a hint to adjust the polynomial `u`.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for adjustment.
+  /// - `u`: The polynomial to be adjusted.
+  /// - `h`: The hint used for adjustment.
+  /// 
+  /// Returns:
+  /// - The adjusted polynomial.
   static Poly _useHintPoly(int gamma2, Poly u, Poly h) {
     Poly res = Poly(Dilithium.N);
     for (int i = 0; i < Dilithium.N; i++) {
@@ -295,6 +364,15 @@ class Dilithium {
     return res;
   }
 
+  /// Adjusts the integer coefficient `a` based on the hint and gamma2 parameter.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for adjustment.
+  /// - `a`: The coefficient to be adjusted.
+  /// - `hint`: The hint used for adjustment.
+  /// 
+  /// Returns:
+  /// - The adjusted coefficient.
   static int _useHintInt(int gamma2, int a, int hint) {
     int a0, a1;
 
@@ -330,19 +408,37 @@ class Dilithium {
     }
   }
 
-  static _Hints makeHints(int gamma2, PolyVec v0, PolyVec v1) {
+  /// Creates hint polynomials for the given polynomial vectors.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for creating hints.
+  /// - `v0`: The first polynomial vector.
+  /// - `v1`: The second polynomial vector.
+  /// 
+  /// Returns:
+  /// - A `_Hints` object containing the hint polynomial vector and the count of hints.
+  static _Hints _makeHints(int gamma2, PolyVec v0, PolyVec v1) {
     PolyVec hintsVec = PolyVec(v0.length);
     int hintsCnt = 0;
 
     for (int i = 0; i < v0.length; i++) {
-      _Hint hint = polyMakeHint(gamma2, v0.poly[i], v1.poly[i]);
+      _Hint hint = _polyMakeHint(gamma2, v0.poly[i], v1.poly[i]);
       hintsCnt += hint.cnt;
       hintsVec.poly[i] = hint.v;
     }
     return _Hints(hintsVec, hintsCnt);
   }
 
-  static _Hint polyMakeHint(int gamma2, Poly a, Poly b) {
+  /// Creates a hint polynomial for the given polynomials.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for creating hints.
+  /// - `a`: The first polynomial.
+  /// - `b`: The second polynomial.
+  /// 
+  /// Returns:
+  /// - A `_Hint` object containing the hint polynomial and the count of hints.
+  static _Hint _polyMakeHint(int gamma2, Poly a, Poly b) {
     Poly hintPoly = Poly(N);
     int hintCnt = 0;
 
@@ -353,6 +449,15 @@ class Dilithium {
     return _Hint(hintPoly, hintCnt);
   }
 
+  /// Determines if a hint should be generated based on the coefficients and gamma2 parameter.
+  /// 
+  /// Parameters:
+  /// - `gamma2`: The parameter used for determining the hint.
+  /// - `a0`: The first coefficient.
+  /// - `a1`: The second coefficient.
+  /// 
+  /// Returns:
+  /// - `0` if no hint is needed, `1` otherwise.
   static int _makeHint(int gamma2, int a0, int a1) {
     if (a0 <= gamma2 || a0 > Q - gamma2 || (a0 == Q - gamma2 && a1 == 0)) {
       return 0;
@@ -360,7 +465,15 @@ class Dilithium {
     return 1;
   }
 
-  static Poly generateChallenge(int tau, Uint8List seed) {
+  /// Generates a challenge polynomial based on the given seed and tau parameter.
+  /// 
+  /// Parameters:
+  /// - `tau`: The number of non-zero coefficients.
+  /// - `seed`: The seed for generating the challenge.
+  /// 
+  /// Returns:
+  /// - The generated challenge polynomial.
+  static Poly _generateChallenge(int tau, Uint8List seed) {
     Poly pre = Poly(Dilithium.N);
     int b, pos;
     int signs;

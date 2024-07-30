@@ -1,4 +1,4 @@
-[![Tests](https://github.com/JannesNebendahl/dilithium/actions/workflows/dart.yml/badge.svg)](https://github.com/JannesNebendahl/dilithium/actions/workflows/dart.yml)
+[![Tests](https://github.com/JannesNebendahl/dilithium/actions/workflows/tests.yml/badge.svg)](https://github.com/JannesNebendahl/dilithium/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/github/JannesNebendahl/dilithium/graph/badge.svg?token=22U0DA66BD)](https://codecov.io/github/JannesNebendahl/dilithium)  
 Dart implementation of the [Dilithium](https://www.pq-crystals.org/dilithium/) signature scheme, which supports all 3 security levels (2, 3, 5)
 

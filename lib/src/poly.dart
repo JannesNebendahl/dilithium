@@ -9,7 +9,7 @@ class Poly {
   List<int> coef;
 
   /// creates a polynomial with `n` coefficients initialized to 0.
-  Poly(int n) : coef = List.filled(n, 0) {}
+  Poly(int n) : coef = List.filled(n, 0);
 
   /// Adds two polynomials element-wise modulo `Dilithium.Q`.
   ///
@@ -111,16 +111,16 @@ class Poly {
     s.doOutput(bb, 0, bb.length);
 
     Poly pre = Poly(Dilithium.N);
-    ctr = _rej_eta(eta, pre.coef, 0, Dilithium.N, bb, bb.length);
+    ctr = _rejEta(eta, pre.coef, 0, Dilithium.N, bb, bb.length);
 
     while (ctr < Dilithium.N) {
       s.doOutput(bb, 0, Dilithium.STREAM256_BLOCKBYTES);
-      ctr += _rej_eta(eta, pre.coef, ctr, Dilithium.N - ctr, bb, Dilithium.STREAM256_BLOCKBYTES);
+      ctr += _rejEta(eta, pre.coef, ctr, Dilithium.N - ctr, bb, Dilithium.STREAM256_BLOCKBYTES);
     }
     return pre;
   }
 
-  static int _rej_eta(int eta, List<int> coef, int off, int len, Uint8List buf, int buflen) {
+  static int _rejEta(int eta, List<int> coef, int off, int len, Uint8List buf, int buflen) {
     int ctr = 0, pos = 0;
     int t0, t1;
 
@@ -171,7 +171,7 @@ class Poly {
       for (start = 0; start < Dilithium.N; start = j + len) {
         zeta = Dilithium.zetas[++k];
         for (j = start; j < start + len; ++j) {
-          t = montgomery_reduce(zeta * ret.coef[j + len]);
+          t = montgomeryReduce(zeta * ret.coef[j + len]);
           ret.coef[j + len] = ret.coef[j] - t;
           ret.coef[j] = ret.coef[j] + t;
         }
@@ -191,7 +191,7 @@ class Poly {
   ///
   /// Returns:
   /// - The reduced integer.
-  static int montgomery_reduce(int a) {
+  static int montgomeryReduce(int a) {
     int t;
 
     t = (a * Dilithium.QINV).toSigned(32);
@@ -227,19 +227,21 @@ class Poly {
     s.doOutput(buf, 0, buflen);
 
     Poly pre = Poly(Dilithium.N);
-    ctr = _rej_uniform(pre.coef, 0, Dilithium.N, buf, buflen);
+    ctr = _rejUniform(pre.coef, 0, Dilithium.N, buf, buflen);
 
     while (ctr < Dilithium.N) {
       off = buflen % 3;
-      for (int i = 0; i < off; i++) buf[i] = buf[buflen - off + i];
+      for (int i = 0; i < off; i++){
+        buf[i] = buf[buflen - off + i];
+      } 
       s.doOutput(buf, off, Dilithium.STREAM128_BLOCKBYTES);
       buflen = Dilithium.STREAM128_BLOCKBYTES + off;
-      ctr += _rej_uniform(pre.coef, ctr, Dilithium.N - ctr, buf, buflen);
+      ctr += _rejUniform(pre.coef, ctr, Dilithium.N - ctr, buf, buflen);
     }
     return pre;
   }
 
-  static int _rej_uniform(List<int> coef, int off, int len, Uint8List buf, int buflen) {
+  static int _rejUniform(List<int> coef, int off, int len, Uint8List buf, int buflen) {
     int ctr = 0, pos = 0;
     int t;
 
@@ -271,7 +273,7 @@ class Poly {
   Poly pointwiseMontgomery(Poly other) {
     Poly c = Poly(Dilithium.N);
     for (int i = 0; i < Dilithium.N; i++) {
-      c.coef[i] = montgomery_reduce(coef[i] * other.coef[i]);
+      c.coef[i] = montgomeryReduce(coef[i] * other.coef[i]);
     }
     return c;
   }
@@ -312,13 +314,13 @@ class Poly {
           t = coef[j];
           coef[j] = t + coef[j + len];
           coef[j + len] = t - coef[j + len];
-          coef[j + len] = montgomery_reduce(zeta * coef[j + len]);
+          coef[j + len] = montgomeryReduce(zeta * coef[j + len]);
         }
       }
     }
 
     for (j = 0; j < Dilithium.N; ++j) {
-      coef[j] = montgomery_reduce(f * coef[j]);
+      coef[j] = montgomeryReduce(f * coef[j]);
     }
   }
 

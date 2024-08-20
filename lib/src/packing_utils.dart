@@ -7,7 +7,7 @@ import 'package:dilithium/src/poly_vec.dart';
 
 class PackingUtils {
 
-  static Poly etaunpack(int eta, Uint8List bytes, int off) {
+  static Poly _etaunpack(int eta, Uint8List bytes, int off) {
     Poly p = Poly(Dilithium.N);
     if (eta == 2) {
       for (int i = 0; i < Dilithium.N ~/ 8; i++) {
@@ -320,13 +320,13 @@ class PackingUtils {
 
     PolyVec s1 = PolyVec(parameterSpec.l);
     for (int i = 0; i < parameterSpec.l; i++) {
-      s1.poly[i] = etaunpack(parameterSpec.eta, bytes, off);
+      s1.poly[i] = _etaunpack(parameterSpec.eta, bytes, off);
       off += POLYETA_PACKEDBYTES;
     }
 
     PolyVec s2 = PolyVec(parameterSpec.k);
     for (int i = 0; i < parameterSpec.k; i++) {
-      s2.poly[i] = etaunpack(parameterSpec.eta, bytes, off);
+      s2.poly[i] = _etaunpack(parameterSpec.eta, bytes, off);
       off += POLYETA_PACKEDBYTES;
     }
 

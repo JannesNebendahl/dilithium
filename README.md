@@ -52,6 +52,16 @@ Dilithium's key features include:
 
 For more detailed information, you can visit the official [Dilithium](https://www.pq-crystals.org/dilithium/) website.
 
+## Advantages of Dart implementation
+
+Implementing the Dilithium signature scheme directly in Dart offers several advantages over using the [c reference implementation](https://github.com/pq-crystals/dilithium) via [`dart:ffi`](https://pub.dev/packages/ffi):
+
+1. **Easier integration**: Direct implementation in Dart avoids the complexity of integrating C code using `dart:ffi`. This reduces the need to deal with the details of memory management and the peculiarities of the C API.
+2. **Platform independence**: Dart code can be executed on different platforms (iOS, Android, web, desktop) without any changes. When using `dart:ffi`, it must be ensured that the C libraries are available and compatible for each target platform.
+3. **Debugging**: Debugging pure Dart code is easier and more convenient than debugging mixed Dart and C code. Dart development environments provide comprehensive debugging tools that make debugging easier.
+
+These advantages make direct implementation in Dart an attractive alternative to using C implementation via `dart:ffi`.
+
 ## DISCLAIMER
 This package is available under the Apache 2.0 license (see LICENSE). Note that the code has not been examined by a third party for potential vulnerabilities and as mentioned was not made to be used for production use. No warranty of any kind is provided. If you don't like those terms, you must refrain from using this software.
 

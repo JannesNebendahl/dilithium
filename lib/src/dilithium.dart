@@ -100,7 +100,14 @@ class Dilithium {
   /// 
   /// Returns:
   /// - A `DilithiumKeyPair` containing the public and private keys.
+  /// 
+  /// Throws:
+  /// - `InvalidSeedLength` exception if the seed length is invalid. The seed needs to be `Dilithium.SEEDBYTES` bytes long.
   static DilithiumKeyPair generateKeyPair(DilithiumParameterSpec spec, Uint8List seed) {
+    if (seed.length != SEEDBYTES) {
+      throw InvalidSeedLength(seed.length);
+    }
+
     Uint8List zeta = seed;
 
     Uint8List o = Utils.getSHAKE256Digest(2 * 32 + 64, [zeta]);
@@ -226,15 +233,12 @@ class Dilithium {
   /// 
   /// Returns:
   /// - `true` if the signature is valid, `false` otherwise.
-  /// 
-  /// Throws:
-  /// - `InvalidSignature` exception if the signature length is invalid.
   static bool verify(DilithiumPublicKey pk, Uint8List sig, Uint8List M) {
     var spec = pk.spec;
     var CRYPTO_BYTES = Utils.getSigLength(spec);
 
     if (sig.length != CRYPTO_BYTES) {
-      throw InvalidSignature();
+      return false;
     }
 
     var t1 = pk.t1;
@@ -255,13 +259,16 @@ class Dilithium {
     for (var i = 0; i < h.length; i++) {
       h.poly[i] = Poly(N);
 
-      if ((sig[off + spec.omega + i] & 0xFF) < k || (sig[off + spec.omega + i] & 0xFF) > spec.omega)
-        throw InvalidSignature();
+      if ((sig[off + spec.omega + i] & 0xFF) < k || (sig[off + spec.omega + i] & 0xFF) > spec.omega){
+        return false;
+      }
 
       for (var j = k; j < (sig[off + spec.omega + i] & 0xFF); j++) {
         /* Coefficients are ordered for strong unforgeability */
         if (j > k && (sig[off + j] & 0xFF) <= (sig[off + j - 1] & 0xFF))
-          throw InvalidSignature();
+        {
+          return false;
+        }
         h.poly[i].coef[sig[off + j] & 0xFF] = 1;
       }
 
@@ -270,12 +277,12 @@ class Dilithium {
 
     for (var j = k; j < spec.omega; j++) {
       if (sig[off + j] != 0) {
-        throw InvalidSignature();
+        return false;
       }
     }
 
     if (z.chknorm(spec.gamma1 - spec.beta)) {
-      throw InvalidSignature();
+      return false;
     }
 
     var mu = Utils.crh(pk.serialize());
@@ -297,7 +304,11 @@ class Dilithium {
     w.invnttTomont();
     w.caddq();
 
-    w = _useHintPolyVec(spec.gamma2, w, h);
+    try{
+      w = _useHintPolyVec(spec.gamma2, w, h);
+    } on IllegalGamma2 {
+      return false;
+    }
 
     var buf = Uint8List(PackingUtils.getPolyW1PackedBytes(spec.gamma2) * w.length);
     PackingUtils.packw1(spec.gamma2, w, buf);
@@ -339,6 +350,9 @@ class Dilithium {
   /// 
   /// Returns:
   /// - The adjusted polynomial vector.
+  /// 
+  /// Throws:
+  /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static PolyVec _useHintPolyVec(int gamma2, PolyVec u, PolyVec h) {
     PolyVec res = PolyVec(u.length);
     for (int i = 0; i < res.length; i++) {
@@ -356,6 +370,9 @@ class Dilithium {
   /// 
   /// Returns:
   /// - The adjusted polynomial.
+  /// 
+  /// Throws:
+  /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static Poly _useHintPoly(int gamma2, Poly u, Poly h) {
     Poly res = Poly(Dilithium.N);
     for (int i = 0; i < Dilithium.N; i++) {
@@ -373,6 +390,9 @@ class Dilithium {
   /// 
   /// Returns:
   /// - The adjusted coefficient.
+  /// 
+  /// Throws:
+  /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static int _useHintInt(int gamma2, int a, int hint) {
     int a0, a1;
 
@@ -394,15 +414,17 @@ class Dilithium {
     }
 
     if (gamma2 == (Dilithium.Q - 1) / 32) {
-      if (a0 > 0)
+      if (a0 > 0) {
         return (a1 + 1) & 15;
-      else
+      } else {
         return (a1 - 1) & 15;
+      }
     } else if (gamma2 == (Dilithium.Q - 1) / 88) {
-      if (a0 > 0)
+      if (a0 > 0) {
         return (a1 == 43) ? 0 : a1 + 1;
-      else
+      } else {
         return (a1 == 0) ? 43 : a1 - 1;
+      }
     } else {
       throw IllegalGamma2(gamma2);
     }
@@ -484,7 +506,9 @@ class Dilithium {
     s.doOutput(buf, 0, buf.length);
 
     signs = 0;
-    for (int i = 0; i < 8; i++) signs |= (buf[i] & 0xFF) << (8 * i);
+    for (int i = 0; i < 8; i++) {
+      signs |= (buf[i] & 0xFF) << (8 * i);
+    }
     pos = 8;
 
     for (int i = Dilithium.N - tau; i < Dilithium.N; ++i) {

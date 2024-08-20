@@ -60,6 +60,12 @@ void main() {
       expectPolyVecsAreEqual(expected, actual);
     });
 
+    test('randomVec throws IllegalEta', (){
+      final rho = Uint8List.fromList([1, 2, 3]);
+
+      expect(() => PolyVec.randomVec(rho, 3, 1, 123), throwsA(isA<IllegalEta>()));
+    });
+
     test('ntt', (){
       List<int> coef = List<int>.generate(Dilithium.N, (index) => index + 1);
       final pv = mockPolyVec([coef]);

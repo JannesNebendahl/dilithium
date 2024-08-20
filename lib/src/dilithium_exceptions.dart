@@ -1,3 +1,5 @@
+import 'package:dilithium/dilithium.dart';
+
 /// Eta must be 2 or 4
 class IllegalEta extends ArgumentError {
   IllegalEta(int eta) : super('Illegal eta: $eta');
@@ -13,8 +15,8 @@ class IllegalGamma2 extends ArgumentError {
   IllegalGamma2(int gamma2) : super('Illegal gamma2: $gamma2');
 }
 
-class InvalidSignature extends ArgumentError {
-  InvalidSignature() : super('Invalid signature');
+class InvalidSeedLength extends ArgumentError {
+  InvalidSeedLength(int actualLength) : super('Invalid seed length, seed needs to be ${Dilithium.SEEDBYTES} bytes long but is $actualLength bytes long');
 }
 
 class PolyVectorLengthMismatch extends ArgumentError {

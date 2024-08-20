@@ -21,8 +21,8 @@ void main() {
     final keyPair = Dilithium.generateKeyPair(spec, randomSeed());
     final altKeyPair = Dilithium.generateKeyPair(spec, randomSeed());
 
-    for(int i = 0; i < 10; i++){
-      final message = Uint8List.fromList(List<int>.generate(i, (_) => i));
+    for(int msgLength = 0; msgLength < 10; msgLength++){
+      final message = Uint8List.fromList(List<int>.generate(msgLength, (_) => msgLength));
 
       final signature = Dilithium.sign(keyPair.privateKey, message);
 
@@ -32,11 +32,15 @@ void main() {
       // Cannot verify with incorrect key
       expect(Dilithium.verify(altKeyPair.publicKey, signature, message), isFalse);
 
+      // Cannot verify with incorrect signature length
+      Uint8List toShortSignature = signature.sublist(0, signature.length - 1);
+      expect(Dilithium.verify(keyPair.publicKey, toShortSignature, message), isFalse);
+
       // Can detect any bit-level modifications of the message
-      for(int j=0; j < i; j++){
-        for(int k=0; k < 8; k++){
+      for(int modifiedByte=0; modifiedByte < msgLength; modifiedByte++){
+        for(int modifiedBit=0; modifiedBit < 8; modifiedBit++){
           final modifiedMessage = message;
-          modifiedMessage[j] ^= 1 << k;
+          modifiedMessage[modifiedByte] ^= 1 << modifiedBit;
 
           expect(Dilithium.verify(keyPair.publicKey, signature, modifiedMessage), isFalse);
         }
@@ -114,5 +118,5 @@ void main() {
       });
     });
   });
-  
+
 }

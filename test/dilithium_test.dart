@@ -76,6 +76,10 @@ void main() {
       expect(keyPair.privateKey.serialize(), prvBytes);
     });
 
+    test('generateKeyPair throws InvalidSeedLength', (){
+      expect(() => Dilithium.generateKeyPair(spec, Uint8List(Dilithium.SEEDBYTES + 1)), throwsA(isA<InvalidSeedLength>()));
+    });
+
     test('sign', (){
       Uint8List actualSignature = Dilithium.sign(privateKey, message);
 
@@ -87,12 +91,6 @@ void main() {
 
       expect(Dilithium.verify(publicKey, signature, message), true);
       expect(Dilithium.verify(publicKey, signature, invalidMsg), false);
-    });
-
-    test('verify throws InvalidSignature', (){
-      Uint8List invalidSignature = Uint8List.fromList([0x49, 0x6E, 0x76, 0x61, 0x6C, 0x69, 0x64]); // == "Invalid"
-
-      expect(() => Dilithium.verify(publicKey, invalidSignature, message), throwsA(isA<InvalidSignature>()));
     });
   });
 }

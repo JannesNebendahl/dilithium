@@ -1,4 +1,4 @@
-import 'package:dilithium/dilithium.dart';
+import 'package:dilithium_crypto/dilithium_crypto.dart';
 
 /// Eta must be 2 or 4
 class IllegalEta extends ArgumentError {

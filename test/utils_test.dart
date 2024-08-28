@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/utils.dart';
+import 'package:dilithium_crypto/dilithium_crypto.dart';
+import 'package:dilithium_crypto/src/utils.dart';
 import 'package:test/test.dart';
 
 void main(){

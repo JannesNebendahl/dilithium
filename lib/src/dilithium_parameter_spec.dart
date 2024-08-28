@@ -1,4 +1,4 @@
-import 'package:dilithium/dilithium.dart';
+import 'package:dilithium_crypto/dilithium_crypto.dart';
 
 class DilithiumParameterSpec {
   final int k;

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
-import 'package:dilithium/dilithium.dart';
-import 'package:dilithium/src/packing_utils.dart';
-import 'package:dilithium/src/poly_vec.dart';
+import 'package:dilithium_crypto/dilithium_crypto.dart';
+import 'package:dilithium_crypto/src/packing_utils.dart';
+import 'package:dilithium_crypto/src/poly_vec.dart';
 
 class DilithiumPrivateKey {
   final DilithiumParameterSpec _spec;

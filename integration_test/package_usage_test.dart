@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:dilithium/dilithium.dart';
 import 'package:test/test.dart';
 
@@ -69,7 +68,7 @@ void main() {
     expect(Dilithium.verify(keyPair.publicKey, newSignature, newMessage), isTrue);
   }
 
-  group('Usage', (){
+  group('Algorithm (Dilithium) usage', (){
     group('Dilithium 2', (){
       final spec = DilithiumParameterSpec.LEVEL2;
 

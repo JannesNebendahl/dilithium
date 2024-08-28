@@ -13,15 +13,10 @@ class DilithiumPublicKey {
   final List<PolyVec> _A;
   final Uint8List _pubbytes;
 
-  DilithiumPublicKey(
-    this._spec,
-    this._rho,
-    this._t1,
-    this._pubbytes,
-    this._A
-  );
+  DilithiumPublicKey(this._spec, this._rho, this._t1, this._pubbytes, this._A);
 
-  static DilithiumPublicKey deserialize(DilithiumParameterSpec spec, Uint8List encodedData){
+  static DilithiumPublicKey deserialize(
+      DilithiumParameterSpec spec, Uint8List encodedData) {
     return PackingUtils.unpackPublicKey(spec, encodedData);
   }
 

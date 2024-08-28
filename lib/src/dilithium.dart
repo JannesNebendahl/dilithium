@@ -45,47 +45,266 @@ class Dilithium {
   static const int STREAM256_BLOCKBYTES = SHAKE256_RATE;
 
   /// Number of blocks for generating uniform polynomials with parameter gamma1
-  static const int POLY_UNIFORM_GAMMA1_NBLOCKS = ((576 + STREAM256_BLOCKBYTES - 1) ~/ STREAM256_BLOCKBYTES);
+  static const int POLY_UNIFORM_GAMMA1_NBLOCKS =
+      ((576 + STREAM256_BLOCKBYTES - 1) ~/ STREAM256_BLOCKBYTES);
 
   /// List of precomputed Zeta coefficients used in number theoretic transforms
   static const List<int> zetas = [
-    0, 25847, -2608894, -518909, 237124, -777960, -876248, 466468,
-    1826347, 2353451, -359251, -2091905, 3119733, -2884855, 3111497,
-    2680103, 2725464, 1024112, -1079900, 3585928, -549488, -1119584,
-    2619752, -2108549, -2118186, -3859737, -1399561, -3277672,
-    1757237, -19422, 4010497, 280005, 2706023, 95776, 3077325,
-    3530437, -1661693, -3592148, -2537516, 3915439, -3861115,
-    -3043716, 3574422, -2867647, 3539968, -300467, 2348700, -539299,
-    -1699267, -1643818, 3505694, -3821735, 3507263, -2140649, -1600420,
-    3699596, 811944, 531354, 954230, 3881043, 3900724, -2556880,
-    2071892, -2797779, -3930395, -1528703, -3677745, -3041255,
-    -1452451, 3475950, 2176455, -1585221, -1257611, 1939314, -4083598,
-    -1000202, -3190144, -3157330, -3632928, 126922, 3412210, -983419,
-    2147896, 2715295, -2967645, -3693493, -411027, -2477047, -671102,
-    -1228525, -22981, -1308169, -381987, 1349076, 1852771, -1430430,
-    -3343383, 264944, 508951, 3097992, 44288, -1100098, 904516,
-    3958618, -3724342, -8578, 1653064, -3249728, 2389356, -210977,
-    759969, -1316856, 189548, -3553272, 3159746, -1851402, -2409325,
-    -177440, 1315589, 1341330, 1285669, -1584928, -812732, -1439742,
-    -3019102, -3881060, -3628969, 3839961, 2091667, 3407706, 2316500,
-    3817976, -3342478, 2244091, -2446433, -3562462, 266997, 2434439,
-    -1235728, 3513181, -3520352, -3759364, -1197226, -3193378, 900702,
-    1859098, 909542, 819034, 495491, -1613174, -43260, -522500,
-    -655327, -3122442, 2031748, 3207046, -3556995, -525098, -768622,
-    -3595838, 342297, 286988, -2437823, 4108315, 3437287, -3342277,
-    1735879, 203044, 2842341, 2691481, -2590150, 1265009, 4055324,
-    1247620, 2486353, 1595974, -3767016, 1250494, 2635921, -3548272,
-    -2994039, 1869119, 1903435, -1050970, -1333058, 1237275, -3318210,
-    -1430225, -451100, 1312455, 3306115, -1962642, -1279661, 1917081,
-    -2546312, -1374803, 1500165, 777191, 2235880, 3406031, -542412,
-    -2831860, -1671176, -1846953, -2584293, -3724270, 594136,
-    -3776993, -2013608, 2432395, 2454455, -164721, 1957272, 3369112,
-    185531, -1207385, -3183426, 162844, 1616392, 3014001, 810149,
-    1652634, -3694233, -1799107, -3038916, 3523897, 3866901, 269760,
-    2213111, -975884, 1717735, 472078, -426683, 1723600, -1803090,
-    1910376, -1667432, -1104333, -260646, -3833893, -2939036,
-    -2235985, -420899, -2286327, 183443, -976891, 1612842, -3545687,
-    -554416, 3919660, -48306, -1362209, 3937738, 1400424, -846154,
+    0,
+    25847,
+    -2608894,
+    -518909,
+    237124,
+    -777960,
+    -876248,
+    466468,
+    1826347,
+    2353451,
+    -359251,
+    -2091905,
+    3119733,
+    -2884855,
+    3111497,
+    2680103,
+    2725464,
+    1024112,
+    -1079900,
+    3585928,
+    -549488,
+    -1119584,
+    2619752,
+    -2108549,
+    -2118186,
+    -3859737,
+    -1399561,
+    -3277672,
+    1757237,
+    -19422,
+    4010497,
+    280005,
+    2706023,
+    95776,
+    3077325,
+    3530437,
+    -1661693,
+    -3592148,
+    -2537516,
+    3915439,
+    -3861115,
+    -3043716,
+    3574422,
+    -2867647,
+    3539968,
+    -300467,
+    2348700,
+    -539299,
+    -1699267,
+    -1643818,
+    3505694,
+    -3821735,
+    3507263,
+    -2140649,
+    -1600420,
+    3699596,
+    811944,
+    531354,
+    954230,
+    3881043,
+    3900724,
+    -2556880,
+    2071892,
+    -2797779,
+    -3930395,
+    -1528703,
+    -3677745,
+    -3041255,
+    -1452451,
+    3475950,
+    2176455,
+    -1585221,
+    -1257611,
+    1939314,
+    -4083598,
+    -1000202,
+    -3190144,
+    -3157330,
+    -3632928,
+    126922,
+    3412210,
+    -983419,
+    2147896,
+    2715295,
+    -2967645,
+    -3693493,
+    -411027,
+    -2477047,
+    -671102,
+    -1228525,
+    -22981,
+    -1308169,
+    -381987,
+    1349076,
+    1852771,
+    -1430430,
+    -3343383,
+    264944,
+    508951,
+    3097992,
+    44288,
+    -1100098,
+    904516,
+    3958618,
+    -3724342,
+    -8578,
+    1653064,
+    -3249728,
+    2389356,
+    -210977,
+    759969,
+    -1316856,
+    189548,
+    -3553272,
+    3159746,
+    -1851402,
+    -2409325,
+    -177440,
+    1315589,
+    1341330,
+    1285669,
+    -1584928,
+    -812732,
+    -1439742,
+    -3019102,
+    -3881060,
+    -3628969,
+    3839961,
+    2091667,
+    3407706,
+    2316500,
+    3817976,
+    -3342478,
+    2244091,
+    -2446433,
+    -3562462,
+    266997,
+    2434439,
+    -1235728,
+    3513181,
+    -3520352,
+    -3759364,
+    -1197226,
+    -3193378,
+    900702,
+    1859098,
+    909542,
+    819034,
+    495491,
+    -1613174,
+    -43260,
+    -522500,
+    -655327,
+    -3122442,
+    2031748,
+    3207046,
+    -3556995,
+    -525098,
+    -768622,
+    -3595838,
+    342297,
+    286988,
+    -2437823,
+    4108315,
+    3437287,
+    -3342277,
+    1735879,
+    203044,
+    2842341,
+    2691481,
+    -2590150,
+    1265009,
+    4055324,
+    1247620,
+    2486353,
+    1595974,
+    -3767016,
+    1250494,
+    2635921,
+    -3548272,
+    -2994039,
+    1869119,
+    1903435,
+    -1050970,
+    -1333058,
+    1237275,
+    -3318210,
+    -1430225,
+    -451100,
+    1312455,
+    3306115,
+    -1962642,
+    -1279661,
+    1917081,
+    -2546312,
+    -1374803,
+    1500165,
+    777191,
+    2235880,
+    3406031,
+    -542412,
+    -2831860,
+    -1671176,
+    -1846953,
+    -2584293,
+    -3724270,
+    594136,
+    -3776993,
+    -2013608,
+    2432395,
+    2454455,
+    -164721,
+    1957272,
+    3369112,
+    185531,
+    -1207385,
+    -3183426,
+    162844,
+    1616392,
+    3014001,
+    810149,
+    1652634,
+    -3694233,
+    -1799107,
+    -3038916,
+    3523897,
+    3866901,
+    269760,
+    2213111,
+    -975884,
+    1717735,
+    472078,
+    -426683,
+    1723600,
+    -1803090,
+    1910376,
+    -1667432,
+    -1104333,
+    -260646,
+    -3833893,
+    -2939036,
+    -2235985,
+    -420899,
+    -2286327,
+    183443,
+    -976891,
+    1612842,
+    -3545687,
+    -554416,
+    3919660,
+    -48306,
+    -1362209,
+    3937738,
+    1400424,
+    -846154,
     1976782
   ];
 
@@ -93,17 +312,18 @@ class Dilithium {
   static const int MUBYTES = 64;
 
   /// Generates a Dilithium key pair using the provided parameters and seed.
-  /// 
+  ///
   /// Parameters:
   /// - `spec`: The parameters specification for Dilithium.
   /// - `seed`: The seed for key generation.
-  /// 
+  ///
   /// Returns:
   /// - A `DilithiumKeyPair` containing the public and private keys.
-  /// 
+  ///
   /// Throws:
   /// - `InvalidSeedLength` exception if the seed length is invalid. The seed needs to be `Dilithium.SEEDBYTES` bytes long.
-  static DilithiumKeyPair generateKeyPair(DilithiumParameterSpec spec, Uint8List seed) {
+  static DilithiumKeyPair generateKeyPair(
+      DilithiumParameterSpec spec, Uint8List seed) {
     if (seed.length != SEEDBYTES) {
       throw InvalidSeedLength(seed.length);
     }
@@ -138,22 +358,24 @@ class Dilithium {
 
     Uint8List tr = Utils.crh(pubbytes);
 
-    Uint8List prvbytes = PackingUtils.packPrvKey(spec.eta, rho, tr, K, res[0], s1, s2);
+    Uint8List prvbytes =
+        PackingUtils.packPrvKey(spec.eta, rho, tr, K, res[0], s1, s2);
 
     PolyVec s2hat = s2.ntt();
     PolyVec t0hat = res[0].ntt();
 
-    DilithiumPrivateKey prv = DilithiumPrivateKey(spec, rho, K, tr, s1, s2, res[0], prvbytes, A, s1hat, s2hat, t0hat);
+    DilithiumPrivateKey prv = DilithiumPrivateKey(
+        spec, rho, K, tr, s1, s2, res[0], prvbytes, A, s1hat, s2hat, t0hat);
     DilithiumPublicKey pub = DilithiumPublicKey(spec, rho, res[1], pubbytes, A);
     return DilithiumKeyPair(pub, prv);
   }
 
   /// Creates a Dilithium signature for the provided messages
-  /// 
+  ///
   /// Parameters:
   /// - `prv`: The private key used for signing.
   /// - `M`: The message to be signed.
-  /// 
+  ///
   /// Returns:
   /// - The signature as a `Uint8List`.
   static Uint8List sign(DilithiumPrivateKey prv, Uint8List M) {
@@ -165,7 +387,7 @@ class Dilithium {
     var mu = Utils.mucrh(conc);
     conc = Utils.concat([prv.K, mu]);
     var rhoprime = Utils.mucrh(conc);
-  
+
     List<PolyVec> A = prv.A;
     PolyVec s1 = prv.s1Hat;
     PolyVec s2 = prv.s2Hat;
@@ -184,7 +406,8 @@ class Dilithium {
 
       var s = SHAKEDigest(256);
       s.update(mu, 0, mu.length);
-      s.update(sig, 0, res[1].length * PackingUtils.getPolyW1PackedBytes(spec.gamma2));
+      s.update(sig, 0,
+          res[1].length * PackingUtils.getPolyW1PackedBytes(spec.gamma2));
       s.doOutput(sig, 0, SEEDBYTES);
 
       var cp = _generateChallenge(spec.tau, sig);
@@ -225,12 +448,12 @@ class Dilithium {
   }
 
   /// Verifies a Dilithium signature using the provided public key and message.
-  /// 
+  ///
   /// Parameters:
   /// - `pk`: The public key used for verification.
   /// - `sig`: The signature to be verified.
   /// - `M`: The message that was signed.
-  /// 
+  ///
   /// Returns:
   /// - `true` if the signature is valid, `false` otherwise.
   static bool verify(DilithiumPublicKey pk, Uint8List sig, Uint8List M) {
@@ -259,14 +482,14 @@ class Dilithium {
     for (var i = 0; i < h.length; i++) {
       h.poly[i] = Poly(N);
 
-      if ((sig[off + spec.omega + i] & 0xFF) < k || (sig[off + spec.omega + i] & 0xFF) > spec.omega){
+      if ((sig[off + spec.omega + i] & 0xFF) < k ||
+          (sig[off + spec.omega + i] & 0xFF) > spec.omega) {
         return false;
       }
 
       for (var j = k; j < (sig[off + spec.omega + i] & 0xFF); j++) {
         /* Coefficients are ordered for strong unforgeability */
-        if (j > k && (sig[off + j] & 0xFF) <= (sig[off + j - 1] & 0xFF))
-        {
+        if (j > k && (sig[off + j] & 0xFF) <= (sig[off + j - 1] & 0xFF)) {
           return false;
         }
         h.poly[i].coef[sig[off + j] & 0xFF] = 1;
@@ -304,13 +527,14 @@ class Dilithium {
     w.invnttTomont();
     w.caddq();
 
-    try{
+    try {
       w = _useHintPolyVec(spec.gamma2, w, h);
     } on IllegalGamma2 {
       return false;
     }
 
-    var buf = Uint8List(PackingUtils.getPolyW1PackedBytes(spec.gamma2) * w.length);
+    var buf =
+        Uint8List(PackingUtils.getPolyW1PackedBytes(spec.gamma2) * w.length);
     PackingUtils.packw1(spec.gamma2, w, buf);
 
     var c2 = Utils.getSHAKE256Digest(SEEDBYTES, [mu, buf]);
@@ -323,12 +547,12 @@ class Dilithium {
   }
 
   /// Expands the matrix `A` for the given parameters.
-  /// 
+  ///
   /// Parameters:
   /// - `rho`: The seed used for generating the matrix.
   /// - `k`: The number of rows in the matrix.
   /// - `l`: The number of columns in the matrix.
-  /// 
+  ///
   /// Returns:
   /// - The generated matrix `A` as a list of `PolyVec` objects.
   static List<PolyVec> expandA(Uint8List rho, int k, int l) {
@@ -342,15 +566,15 @@ class Dilithium {
   }
 
   /// Uses a hint to adjust the polynomial vector `u`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for adjustment.
   /// - `u`: The polynomial vector to be adjusted.
   /// - `h`: The hint used for adjustment.
-  /// 
+  ///
   /// Returns:
   /// - The adjusted polynomial vector.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static PolyVec _useHintPolyVec(int gamma2, PolyVec u, PolyVec h) {
@@ -362,15 +586,15 @@ class Dilithium {
   }
 
   /// Uses a hint to adjust the polynomial `u`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for adjustment.
   /// - `u`: The polynomial to be adjusted.
   /// - `h`: The hint used for adjustment.
-  /// 
+  ///
   /// Returns:
   /// - The adjusted polynomial.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static Poly _useHintPoly(int gamma2, Poly u, Poly h) {
@@ -382,15 +606,15 @@ class Dilithium {
   }
 
   /// Adjusts the integer coefficient `a` based on the hint and gamma2 parameter.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for adjustment.
   /// - `a`: The coefficient to be adjusted.
   /// - `hint`: The hint used for adjustment.
-  /// 
+  ///
   /// Returns:
   /// - The adjusted coefficient.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma2` exception if the gamma2 parameter is invalid.
   static int _useHintInt(int gamma2, int a, int hint) {
@@ -431,12 +655,12 @@ class Dilithium {
   }
 
   /// Creates hint polynomials for the given polynomial vectors.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for creating hints.
   /// - `v0`: The first polynomial vector.
   /// - `v1`: The second polynomial vector.
-  /// 
+  ///
   /// Returns:
   /// - A `_Hints` object containing the hint polynomial vector and the count of hints.
   static _Hints _makeHints(int gamma2, PolyVec v0, PolyVec v1) {
@@ -452,12 +676,12 @@ class Dilithium {
   }
 
   /// Creates a hint polynomial for the given polynomials.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for creating hints.
   /// - `a`: The first polynomial.
   /// - `b`: The second polynomial.
-  /// 
+  ///
   /// Returns:
   /// - A `_Hint` object containing the hint polynomial and the count of hints.
   static _Hint _polyMakeHint(int gamma2, Poly a, Poly b) {
@@ -472,12 +696,12 @@ class Dilithium {
   }
 
   /// Determines if a hint should be generated based on the coefficients and gamma2 parameter.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter used for determining the hint.
   /// - `a0`: The first coefficient.
   /// - `a1`: The second coefficient.
-  /// 
+  ///
   /// Returns:
   /// - `0` if no hint is needed, `1` otherwise.
   static int _makeHint(int gamma2, int a0, int a1) {
@@ -488,11 +712,11 @@ class Dilithium {
   }
 
   /// Generates a challenge polynomial based on the given seed and tau parameter.
-  /// 
+  ///
   /// Parameters:
   /// - `tau`: The number of non-zero coefficients.
   /// - `seed`: The seed for generating the challenge.
-  /// 
+  ///
   /// Returns:
   /// - The generated challenge polynomial.
   static Poly _generateChallenge(int tau, Uint8List seed) {
@@ -540,5 +764,3 @@ class _Hint {
 
   _Hint(this.v, this.cnt);
 }
-
-  

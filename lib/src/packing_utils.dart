@@ -4,21 +4,21 @@ import 'package:dilithium_crypto/dilithium_crypto.dart';
 import 'package:dilithium_crypto/src/poly.dart';
 import 'package:dilithium_crypto/src/poly_vec.dart';
 
-
 class PackingUtils {
-
   static Poly _etaunpack(int eta, Uint8List bytes, int off) {
     Poly p = Poly(Dilithium.N);
     if (eta == 2) {
       for (int i = 0; i < Dilithium.N ~/ 8; i++) {
         p.coef[8 * i + 0] = ((bytes[off + 3 * i + 0] & 0xFF) >> 0) & 7;
         p.coef[8 * i + 1] = ((bytes[off + 3 * i + 0] & 0xFF) >> 3) & 7;
-        p.coef[8 * i + 2] = (((bytes[off + 3 * i + 0] & 0xFF) >> 6) | 
-                            ((bytes[off + 3 * i + 1] & 0xFF) << 2)) & 7;
+        p.coef[8 * i + 2] = (((bytes[off + 3 * i + 0] & 0xFF) >> 6) |
+                ((bytes[off + 3 * i + 1] & 0xFF) << 2)) &
+            7;
         p.coef[8 * i + 3] = ((bytes[off + 3 * i + 1] & 0xFF) >> 1) & 7;
         p.coef[8 * i + 4] = ((bytes[off + 3 * i + 1] & 0xFF) >> 4) & 7;
-        p.coef[8 * i + 5] = (((bytes[off + 3 * i + 1] & 0xFF) >> 7) | 
-                            ((bytes[off + 3 * i + 2] & 0xFF) << 1)) & 7;
+        p.coef[8 * i + 5] = (((bytes[off + 3 * i + 1] & 0xFF) >> 7) |
+                ((bytes[off + 3 * i + 2] & 0xFF) << 1)) &
+            7;
         p.coef[8 * i + 6] = ((bytes[off + 3 * i + 2] & 0xFF) >> 2) & 7;
         p.coef[8 * i + 7] = ((bytes[off + 3 * i + 2] & 0xFF) >> 5) & 7;
 
@@ -45,15 +45,15 @@ class PackingUtils {
   }
 
   /// Returns the number of bytes required to pack a polynomial object with the specified `eta`.
-  /// 
+  ///
   /// Parameters:
   /// - `eta`: The parameter determining the compression. Valid values are 2 and 4.
-  /// 
+  ///
   /// Returns:
   /// - The number of bytes required to pack a polynomial object.
   ///   - If `eta` is 2, the function returns 96.
   ///   - If `eta` is 4, the function returns 128.
-  /// 
+  ///
   /// Throws:
   /// - `ArgumentError` if `eta` is not a valid value (not 2 or 4).
   static int getPolyEtaPackedBytes(int eta) {
@@ -67,15 +67,15 @@ class PackingUtils {
   }
 
   /// Returns the number of bytes required to pack a polynomial object with the specified `gamma2`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter determining the range of coefficients. Valid values are `(Dilithium.Q - 1) ~/ 88` and `(Dilithium.Q - 1) ~/ 32`.
-  /// 
+  ///
   /// Returns:
   /// - The number of bytes required to pack a polynomial object.
   ///   - If `gamma2` is `(Dilithium.Q - 1) ~/ 88`, the function returns 192.
   ///   - If `gamma2` is `(Dilithium.Q - 1) ~/ 32`, the function returns 128.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma2` if `gamma2` is not a valid value.
   static int getPolyW1PackedBytes(int gamma2) {
@@ -89,15 +89,15 @@ class PackingUtils {
   }
 
   /// Returns the number of bytes required to pack a polynomial object with the specified `gamma1`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma1`: The parameter determining the range of coefficients. Valid values are `1 << 17` and `1 << 19`.
-  /// 
+  ///
   /// Returns:
   /// - The number of bytes required to pack a polynomial object.
   ///   - If `gamma1` is `1 << 17`, the function returns 576.
   ///   - If `gamma1` is `1 << 19`, the function returns 640.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma1` if `gamma1` is not a valid value.
   static int getPolyZPackedBytes(int gamma1) {
@@ -111,7 +111,7 @@ class PackingUtils {
   }
 
   /// Packs the private key components into a single `Uint8List`.
-  /// 
+  ///
   /// Parameters:
   /// - `eta`: The parameter determining the range of coefficients.
   /// - `rho`: The seed for the first part of the secret key.
@@ -120,13 +120,14 @@ class PackingUtils {
   /// - `t0`: The `PolyVec` object containing the `t0` polynomials.
   /// - `s1`: The `PolyVec` object containing the `s1` polynomials.
   /// - `s2`: The `PolyVec` object containing the `s2` polynomials.
-  /// 
+  ///
   /// Returns:
   /// - A `Uint8List` containing the packed private key.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalEta` if `eta` is not 2 or 4.
-  static Uint8List packPrvKey(int eta, Uint8List rho, Uint8List tr, Uint8List K, PolyVec t0, PolyVec s1, PolyVec s2) {
+  static Uint8List packPrvKey(int eta, Uint8List rho, Uint8List tr, Uint8List K,
+      PolyVec t0, PolyVec s1, PolyVec s2) {
     int off = 0;
     int polyEtaPackedBytes;
     switch (eta) {
@@ -140,7 +141,11 @@ class PackingUtils {
         throw IllegalEta(eta);
     }
 
-    final int cryptoSecreteKeyByte = (2 * Dilithium.SEEDBYTES + Dilithium.CRHBYTES + s1.length * polyEtaPackedBytes + s2.length * polyEtaPackedBytes + s2.length * Dilithium.POLYT0_PACKEDBYTES);
+    final int cryptoSecreteKeyByte = (2 * Dilithium.SEEDBYTES +
+        Dilithium.CRHBYTES +
+        s1.length * polyEtaPackedBytes +
+        s2.length * polyEtaPackedBytes +
+        s2.length * Dilithium.POLYT0_PACKEDBYTES);
     Uint8List buf = Uint8List(cryptoSecreteKeyByte);
 
     for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
@@ -176,15 +181,16 @@ class PackingUtils {
   }
 
   /// Packs the public key components into a single `Uint8List`.
-  /// 
+  ///
   /// Parameters:
   /// - `rho`: The seed for the public key.
   /// - `t`: The `PolyVec` object containing the `t` polynomials.
-  /// 
+  ///
   /// Returns:
   /// - A `Uint8List` object containing the packed public key.
   static Uint8List packPubKey(Uint8List rho, PolyVec t) {
-    int cryptoPublicBytes = Dilithium.SEEDBYTES + t.length * Dilithium.POLYT1_PACKEDBYTES;
+    int cryptoPublicBytes =
+        Dilithium.SEEDBYTES + t.length * Dilithium.POLYT1_PACKEDBYTES;
 
     Uint8List pk = Uint8List(cryptoPublicBytes);
     for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
@@ -192,13 +198,14 @@ class PackingUtils {
     }
 
     for (int i = 0; i < t.length; i++) {
-      t.poly[i].t1pack(pk, Dilithium.SEEDBYTES + i * Dilithium.POLYT1_PACKEDBYTES);
+      t.poly[i]
+          .t1pack(pk, Dilithium.SEEDBYTES + i * Dilithium.POLYT1_PACKEDBYTES);
     }
     return pk;
   }
 
   /// Packs the signature components into a single `Uint8List`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma1`: The parameter determining the range of coefficients for `z`.
   /// - `omega`: The number of non-zero coefficients in `h`.
@@ -206,7 +213,8 @@ class PackingUtils {
   /// - `c`: A `Uint8List` representing the challenge hash.
   /// - `z`: A `PolyVec` object representing the polynomial vector `z`.
   /// - `h`: A `PolyVec` object representing the polynomial vector `h`.
-  static void packSig(int gamma1, int omega, Uint8List sig, Uint8List c, PolyVec z, PolyVec h) {
+  static void packSig(
+      int gamma1, int omega, Uint8List sig, Uint8List c, PolyVec z, PolyVec h) {
     int polyZPackedBytes = getPolyZPackedBytes(gamma1);
 
     int off = 0;
@@ -237,7 +245,7 @@ class PackingUtils {
   }
 
   /// Packs the `w1` components of the polynomial vector into a `Uint8List`.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The parameter determining the range of coefficients for `w1`.
   /// - `w`: A `PolyVec` object representing the polynomial vector `w`.
@@ -255,39 +263,39 @@ class PackingUtils {
     Poly p = Poly(Dilithium.N);
     for (int i = 0; i < Dilithium.N ~/ 8; i++) {
       p.coef[8 * i + 0] = (bytes[off + 13 * i + 0] & 0xFF) |
-                          ((bytes[off + 13 * i + 1] & 0xFF) << 8);
+          ((bytes[off + 13 * i + 1] & 0xFF) << 8);
       p.coef[8 * i + 0] &= 0x1FFF;
 
       p.coef[8 * i + 1] = ((bytes[off + 13 * i + 1] & 0xFF) >> 5) |
-                          ((bytes[off + 13 * i + 2] & 0xFF) << 3) |
-                          ((bytes[off + 13 * i + 3] & 0xFF) << 11);
+          ((bytes[off + 13 * i + 2] & 0xFF) << 3) |
+          ((bytes[off + 13 * i + 3] & 0xFF) << 11);
       p.coef[8 * i + 1] &= 0x1FFF;
 
       p.coef[8 * i + 2] = ((bytes[off + 13 * i + 3] & 0xFF) >> 2) |
-                          ((bytes[off + 13 * i + 4] & 0xFF) << 6);
+          ((bytes[off + 13 * i + 4] & 0xFF) << 6);
       p.coef[8 * i + 2] &= 0x1FFF;
 
       p.coef[8 * i + 3] = ((bytes[off + 13 * i + 4] & 0xFF) >> 7) |
-                          ((bytes[off + 13 * i + 5] & 0xFF) << 1) |
-                          ((bytes[off + 13 * i + 6] & 0xFF) << 9);
+          ((bytes[off + 13 * i + 5] & 0xFF) << 1) |
+          ((bytes[off + 13 * i + 6] & 0xFF) << 9);
       p.coef[8 * i + 3] &= 0x1FFF;
 
       p.coef[8 * i + 4] = ((bytes[off + 13 * i + 6] & 0xFF) >> 4) |
-                          ((bytes[off + 13 * i + 7] & 0xFF) << 4) |
-                          ((bytes[off + 13 * i + 8] & 0xFF) << 12);
+          ((bytes[off + 13 * i + 7] & 0xFF) << 4) |
+          ((bytes[off + 13 * i + 8] & 0xFF) << 12);
       p.coef[8 * i + 4] &= 0x1FFF;
 
       p.coef[8 * i + 5] = ((bytes[off + 13 * i + 8] & 0xFF) >> 1) |
-                          ((bytes[off + 13 * i + 9] & 0xFF) << 7);
+          ((bytes[off + 13 * i + 9] & 0xFF) << 7);
       p.coef[8 * i + 5] &= 0x1FFF;
 
       p.coef[8 * i + 6] = ((bytes[off + 13 * i + 9] & 0xFF) >> 6) |
-                          ((bytes[off + 13 * i + 10] & 0xFF) << 2) |
-                          ((bytes[off + 13 * i + 11] & 0xFF) << 10);
+          ((bytes[off + 13 * i + 10] & 0xFF) << 2) |
+          ((bytes[off + 13 * i + 11] & 0xFF) << 10);
       p.coef[8 * i + 6] &= 0x1FFF;
 
       p.coef[8 * i + 7] = ((bytes[off + 13 * i + 11] & 0xFF) >> 3) |
-                          ((bytes[off + 13 * i + 12] & 0xFF) << 5);
+          ((bytes[off + 13 * i + 12] & 0xFF) << 5);
       p.coef[8 * i + 7] &= 0x1FFF;
 
       p.coef[8 * i + 0] = (1 << (Dilithium.D - 1)) - p.coef[8 * i + 0];
@@ -305,26 +313,33 @@ class PackingUtils {
   static Poly t1unpack(Uint8List bytes, int off) {
     Poly p = Poly(Dilithium.N);
     for (int i = 0; i < Dilithium.N ~/ 4; i++) {
-      p.coef[4 * i + 0] = ((bytes[off + 5 * i + 0] & 0xFF) |
-                          (bytes[off + 5 * i + 1] << 8)) & 0x3FF;
+      p.coef[4 * i + 0] =
+          ((bytes[off + 5 * i + 0] & 0xFF) | (bytes[off + 5 * i + 1] << 8)) &
+              0x3FF;
       p.coef[4 * i + 1] = (((bytes[off + 5 * i + 1] & 0xFF) >> 2) |
-                          (bytes[off + 5 * i + 2] << 6)) & 0x3FF;
+              (bytes[off + 5 * i + 2] << 6)) &
+          0x3FF;
       p.coef[4 * i + 2] = (((bytes[off + 5 * i + 2] & 0xFF) >> 4) |
-                          (bytes[off + 5 * i + 3] << 4)) & 0x3FF;
+              (bytes[off + 5 * i + 3] << 4)) &
+          0x3FF;
       p.coef[4 * i + 3] = (((bytes[off + 5 * i + 3] & 0xFF) >> 6) |
-                          (bytes[off + 5 * i + 4] << 2)) & 0x3FF;
+              (bytes[off + 5 * i + 4] << 2)) &
+          0x3FF;
     }
     return p;
   }
 
-  static DilithiumPrivateKey unpackPrivateKey(DilithiumParameterSpec parameterSpec, Uint8List bytes) {
+  static DilithiumPrivateKey unpackPrivateKey(
+      DilithiumParameterSpec parameterSpec, Uint8List bytes) {
     final int polyEtaPackedBytes = getPolyEtaPackedBytes(parameterSpec.eta);
 
     int off = 0;
-    Uint8List rho = Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
+    Uint8List rho =
+        Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
     off += Dilithium.SEEDBYTES;
 
-    Uint8List key = Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
+    Uint8List key =
+        Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
     off += Dilithium.SEEDBYTES;
 
     Uint8List tr = Uint8List.sublistView(bytes, off, off + Dilithium.CRHBYTES);
@@ -354,12 +369,15 @@ class PackingUtils {
     PolyVec s2hat = s2.ntt();
     PolyVec t0hat = t0.ntt();
 
-    return DilithiumPrivateKey(parameterSpec, rho, key, tr, s1, s2, t0, bytes, A, s1hat, s2hat, t0hat);
+    return DilithiumPrivateKey(
+        parameterSpec, rho, key, tr, s1, s2, t0, bytes, A, s1hat, s2hat, t0hat);
   }
 
-  static DilithiumPublicKey unpackPublicKey(DilithiumParameterSpec parameterSpec, Uint8List bytes) {
+  static DilithiumPublicKey unpackPublicKey(
+      DilithiumParameterSpec parameterSpec, Uint8List bytes) {
     int off = 0;
-    Uint8List rho = Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
+    Uint8List rho =
+        Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
     off += Dilithium.SEEDBYTES;
 
     PolyVec p = PolyVec(parameterSpec.k);
@@ -373,14 +391,14 @@ class PackingUtils {
 
     return DilithiumPublicKey(parameterSpec, rho, p, bytes, A);
   }
-  
+
   /// Unpacks a polynomial from the given `Uint8List` starting at the specified offset.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma1`: The parameter determining the range of coefficients for the polynomial.
   /// - `sig`: A `Uint8List` containing the packed polynomial data.
   /// - `off`: The offset in the `sig` array where the packed data starts.
-  /// 
+  ///
   /// Returns:
   /// - A `Poly` object containing the unpacked coefficients.
   static Poly zunpack(int gamma1, Uint8List sig, int off) {

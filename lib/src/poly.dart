@@ -13,7 +13,7 @@ class Poly {
 
   /// Adds two polynomials element-wise modulo `Dilithium.Q`.
   ///
-  /// This method adds the coefficients of the current polynomial to the 
+  /// This method adds the coefficients of the current polynomial to the
   /// corresponding coefficients of the `other` polynomial, storing the result
   /// in a new polynomial.
   ///
@@ -32,7 +32,7 @@ class Poly {
 
   /// Subtracts another polynomial from this polynomial element-wise modulo `Dilithium.Q`.
   ///
-  /// This method subtracts the coefficients of the `other` polynomial from the 
+  /// This method subtracts the coefficients of the `other` polynomial from the
   /// corresponding coefficients of the current polynomial, storing the result
   /// in a new polynomial.
   ///
@@ -51,10 +51,10 @@ class Poly {
 
   // this method is used to realize the modulo operator in the java implementation of the library
   int _inRangeOfDilithiumQ(int value) {
-    while(value >= Dilithium.Q) {
+    while (value >= Dilithium.Q) {
       value -= Dilithium.Q;
     }
-    while(value <= -Dilithium.Q){
+    while (value <= -Dilithium.Q) {
       value += Dilithium.Q;
     }
     return value;
@@ -91,9 +91,11 @@ class Poly {
   static Poly genRandom(Uint8List rho, int eta, int nonce) {
     int polyUniformEtaNBlocks;
     if (eta == 2) {
-      polyUniformEtaNBlocks = ((136 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
+      polyUniformEtaNBlocks = ((136 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/
+          Dilithium.STREAM256_BLOCKBYTES);
     } else if (eta == 4) {
-      polyUniformEtaNBlocks = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
+      polyUniformEtaNBlocks = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/
+          Dilithium.STREAM256_BLOCKBYTES);
     } else {
       throw IllegalEta(eta);
     }
@@ -115,12 +117,14 @@ class Poly {
 
     while (ctr < Dilithium.N) {
       s.doOutput(bb, 0, Dilithium.STREAM256_BLOCKBYTES);
-      ctr += _rejEta(eta, pre.coef, ctr, Dilithium.N - ctr, bb, Dilithium.STREAM256_BLOCKBYTES);
+      ctr += _rejEta(eta, pre.coef, ctr, Dilithium.N - ctr, bb,
+          Dilithium.STREAM256_BLOCKBYTES);
     }
     return pre;
   }
 
-  static int _rejEta(int eta, List<int> coef, int off, int len, Uint8List buf, int buflen) {
+  static int _rejEta(
+      int eta, List<int> coef, int off, int len, Uint8List buf, int buflen) {
     int ctr = 0, pos = 0;
     int t0, t1;
 
@@ -199,7 +203,6 @@ class Poly {
     return t;
   }
 
-
   /// Generates a polynomial with coefficients uniformly sampled from a bounded set.
   ///
   /// This function generates a polynomial with coefficients that are uniformly
@@ -212,7 +215,9 @@ class Poly {
   /// Returns:
   /// - A polynomial `Poly` with coefficients sampled uniformly at random.
   static Poly genUniformRandom(Uint8List rho, int nonce) {
-    final int polyUniformNBlocks = ((768 + Dilithium.STREAM128_BLOCKBYTES - 1) ~/ Dilithium.STREAM128_BLOCKBYTES);
+    final int polyUniformNBlocks =
+        ((768 + Dilithium.STREAM128_BLOCKBYTES - 1) ~/
+            Dilithium.STREAM128_BLOCKBYTES);
     int ctr, off;
     int buflen = polyUniformNBlocks * Dilithium.STREAM128_BLOCKBYTES;
     var buf = Uint8List(buflen + 2);
@@ -231,9 +236,9 @@ class Poly {
 
     while (ctr < Dilithium.N) {
       off = buflen % 3;
-      for (int i = 0; i < off; i++){
+      for (int i = 0; i < off; i++) {
         buf[i] = buf[buflen - off + i];
-      } 
+      }
       s.doOutput(buf, off, Dilithium.STREAM128_BLOCKBYTES);
       buflen = Dilithium.STREAM128_BLOCKBYTES + off;
       ctr += _rejUniform(pre.coef, ctr, Dilithium.N - ctr, buf, buflen);
@@ -241,7 +246,8 @@ class Poly {
     return pre;
   }
 
-  static int _rejUniform(List<int> coef, int off, int len, Uint8List buf, int buflen) {
+  static int _rejUniform(
+      List<int> coef, int off, int len, Uint8List buf, int buflen) {
     int ctr = 0, pos = 0;
     int t;
 
@@ -277,7 +283,7 @@ class Poly {
     }
     return c;
   }
-  
+
   /// Reduces each coefficient of this polynomial modulo `Dilithium.Q`.
   ///
   /// This function reduces each coefficient of the polynomial `coef` modulo
@@ -373,9 +379,12 @@ class Poly {
   void t1pack(Uint8List r, int off) {
     for (int i = 0; i < Dilithium.N / 4; i++) {
       r[5 * i + 0 + off] = (coef[4 * i + 0] >> 0) & 0xFF;
-      r[5 * i + 1 + off] = (coef[4 * i + 0] >> 8) | ((coef[4 * i + 1] << 2) & 0xFF);
-      r[5 * i + 2 + off] = (coef[4 * i + 1] >> 6) | ((coef[4 * i + 2] << 4) & 0xFF);
-      r[5 * i + 3 + off] = (coef[4 * i + 2] >> 4) | ((coef[4 * i + 3] << 6) & 0xFF);
+      r[5 * i + 1 + off] =
+          (coef[4 * i + 0] >> 8) | ((coef[4 * i + 1] << 2) & 0xFF);
+      r[5 * i + 2 + off] =
+          (coef[4 * i + 1] >> 6) | ((coef[4 * i + 2] << 4) & 0xFF);
+      r[5 * i + 3 + off] =
+          (coef[4 * i + 2] >> 4) | ((coef[4 * i + 3] << 6) & 0xFF);
       r[5 * i + 4 + off] = (coef[4 * i + 3] >> 2) & 0xFF;
     }
   }
@@ -412,7 +421,8 @@ class Poly {
         t[7] = eta - coef[8 * i + 7];
 
         buf[off + 3 * i + 0] = ((t[0] >> 0) | (t[1] << 3) | (t[2] << 6)) & 0xFF;
-        buf[off + 3 * i + 1] = ((t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7)) & 0xFF;
+        buf[off + 3 * i + 1] =
+            ((t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7)) & 0xFF;
         buf[off + 3 * i + 2] = ((t[5] >> 1) | (t[6] << 2) | (t[7] << 5)) & 0xFF;
       }
     } else if (eta == 4) {
@@ -487,7 +497,8 @@ class Poly {
   /// Throws [IllegalGamma1] if `gamma1` is not 2^17 or 2^19.
   static Poly genRandomGamma1(Uint8List seed, int nonce, int N, int gamma1) {
     Poly pre = Poly(N);
-    Uint8List buf = Uint8List(Dilithium.POLY_UNIFORM_GAMMA1_NBLOCKS * Dilithium.STREAM256_BLOCKBYTES);
+    Uint8List buf = Uint8List(
+        Dilithium.POLY_UNIFORM_GAMMA1_NBLOCKS * Dilithium.STREAM256_BLOCKBYTES);
     final s = SHAKEDigest(256);
     s.update(seed, 0, seed.length);
 
@@ -500,35 +511,35 @@ class Poly {
     if (gamma1 == (1 << 17)) {
       for (int i = 0; i < N / 4; i++) {
         pre.coef[4 * i + 0] = (buf[9 * i + 0] & 0xFF) |
-                              ((buf[9 * i + 1] & 0xFF) << 8) |
-                              ((buf[9 * i + 2] & 0xFF) << 16) & 0x3FFFF;
+            ((buf[9 * i + 1] & 0xFF) << 8) |
+            ((buf[9 * i + 2] & 0xFF) << 16) & 0x3FFFF;
         pre.coef[4 * i + 0] = gamma1 - pre.coef[4 * i + 0];
 
         pre.coef[4 * i + 1] = ((buf[9 * i + 2] & 0xFF) >> 2) |
-                              ((buf[9 * i + 3] & 0xFF) << 6) |
-                              ((buf[9 * i + 4] & 0xFF) << 14) & 0x3FFFF;
+            ((buf[9 * i + 3] & 0xFF) << 6) |
+            ((buf[9 * i + 4] & 0xFF) << 14) & 0x3FFFF;
         pre.coef[4 * i + 1] = gamma1 - pre.coef[4 * i + 1];
 
         pre.coef[4 * i + 2] = ((buf[9 * i + 4] & 0xFF) >> 4) |
-                              ((buf[9 * i + 5] & 0xFF) << 4) |
-                              ((buf[9 * i + 6] & 0xFF) << 12) & 0x3FFFF;
+            ((buf[9 * i + 5] & 0xFF) << 4) |
+            ((buf[9 * i + 6] & 0xFF) << 12) & 0x3FFFF;
         pre.coef[4 * i + 2] = gamma1 - pre.coef[4 * i + 2];
 
         pre.coef[4 * i + 3] = ((buf[9 * i + 6] & 0xFF) >> 6) |
-                              ((buf[9 * i + 7] & 0xFF) << 2) |
-                              ((buf[9 * i + 8] & 0xFF) << 10) & 0x3FFFF;
+            ((buf[9 * i + 7] & 0xFF) << 2) |
+            ((buf[9 * i + 8] & 0xFF) << 10) & 0x3FFFF;
         pre.coef[4 * i + 3] = gamma1 - pre.coef[4 * i + 3];
       }
     } else if (gamma1 == (1 << 19)) {
       for (int i = 0; i < N / 2; i++) {
         pre.coef[2 * i + 0] = (buf[5 * i + 0] & 0xFF) |
-                              ((buf[5 * i + 1] & 0xFF) << 8) |
-                              ((buf[5 * i + 2] & 0xFF) << 16) & 0xFFFFF;
+            ((buf[5 * i + 1] & 0xFF) << 8) |
+            ((buf[5 * i + 2] & 0xFF) << 16) & 0xFFFFF;
         pre.coef[2 * i + 0] = gamma1 - pre.coef[2 * i + 0];
 
         pre.coef[2 * i + 1] = ((buf[5 * i + 2] & 0xFF) >> 4) |
-                              ((buf[5 * i + 3] & 0xFF) << 4) |
-                              ((buf[5 * i + 4] & 0xFF) << 12) & 0xFFFFF;
+            ((buf[5 * i + 3] & 0xFF) << 4) |
+            ((buf[5 * i + 4] & 0xFF) << 12) & 0xFFFFF;
         pre.coef[2 * i + 1] = gamma1 - pre.coef[2 * i + 1];
       }
     } else {
@@ -538,16 +549,15 @@ class Poly {
     return pre;
   }
 
-
-  /// Decomposes each coefficient of the polynomial into two parts based on the value of gamma2.  
-  /// 
+  /// Decomposes each coefficient of the polynomial into two parts based on the value of gamma2.
+  ///
   /// Parameters:
   /// - `gamma2`: The value of gamma2 (either (Dilithium.Q - 1) / 32 or (Dilithium.Q - 1) / 88).
-  /// 
+  ///
   /// Returns: A list containing two polynomials.
   /// - index 0: The rounded remainder polynomial
   /// - index 1: The large polynomial part
-  /// 
+  ///
   /// Throws [IllegalGamma2] if `gamma2` is neither (Dilithium.Q - 1) / 32 nor (Dilithium.Q - 1) / 88.
   List<Poly> decompose(final int gamma2) {
     List<Poly> pr = [Poly(Dilithium.N), Poly(Dilithium.N)];
@@ -565,7 +575,8 @@ class Poly {
         throw IllegalGamma2(gamma2);
       }
       pr[0].coef[i] = a - a1 * 2 * gamma2;
-      pr[0].coef[i] -= (((Dilithium.Q - 1) ~/ 2 - pr[0].coef[i]) >> 31) & Dilithium.Q;
+      pr[0].coef[i] -=
+          (((Dilithium.Q - 1) ~/ 2 - pr[0].coef[i]) >> 31) & Dilithium.Q;
       pr[1].coef[i] = a1;
     }
     return pr;
@@ -680,6 +691,3 @@ class Poly {
     return pr;
   }
 }
-
-
-

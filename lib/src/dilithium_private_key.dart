@@ -20,21 +20,21 @@ class DilithiumPrivateKey {
   final List<PolyVec> _A;
 
   DilithiumPrivateKey(
-    this._spec,
-    this._rho,
-    this._K,
-    this._tr,
-    this._s1,
-    this._s2,
-    this._t0,
-    this._prvbytes,
-    this._A,
-    this._s1Hat,
-    this._s2Hat,
-    this._t0Hat
-  );
+      this._spec,
+      this._rho,
+      this._K,
+      this._tr,
+      this._s1,
+      this._s2,
+      this._t0,
+      this._prvbytes,
+      this._A,
+      this._s1Hat,
+      this._s2Hat,
+      this._t0Hat);
 
-  static DilithiumPrivateKey deserialize(DilithiumParameterSpec spec, Uint8List encodedData){
+  static DilithiumPrivateKey deserialize(
+      DilithiumParameterSpec spec, Uint8List encodedData) {
     return PackingUtils.unpackPrivateKey(spec, encodedData);
   }
 
@@ -53,5 +53,4 @@ class DilithiumPrivateKey {
   PolyVec get s2Hat => _s2Hat;
   PolyVec get t0Hat => _t0Hat;
   List<PolyVec> get A => _A;
-
 }

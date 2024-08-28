@@ -17,36 +17,38 @@ class PolyVec {
   int get length => poly.length;
 
   /// Adds another `PolyVec` to this one and returns the result.
-  /// 
+  ///
   /// Throws an `PolyVectorLengthMismatch` if the lengths of the two vectors do not match.
   PolyVec add(PolyVec other) {
     if (other.length != length) {
       throw PolyVectorLengthMismatch(other.length, length);
     }
-    final newPoly = List<Poly>.generate(poly.length, (i) => poly[i].add(other.poly[i]));
+    final newPoly =
+        List<Poly>.generate(poly.length, (i) => poly[i].add(other.poly[i]));
     return PolyVec._(newPoly);
   }
 
   /// Subtracts another `PolyVec` from this one and returns the result.
-  /// 
+  ///
   /// Throws an `PolyVectorLengthMismatch` if the lengths of the two vectors do not match.
   PolyVec sub(PolyVec other) {
     if (other.length != length) {
       throw PolyVectorLengthMismatch(other.length, length);
     }
-    final newPoly = List<Poly>.generate(poly.length, (i) => poly[i].sub(other.poly[i]));
+    final newPoly =
+        List<Poly>.generate(poly.length, (i) => poly[i].sub(other.poly[i]));
     return PolyVec._(newPoly);
   }
 
   /// Generates a random `PolyVec` using the given parameters.
-  /// 
+  ///
   /// Parameters:
   /// - `rho`: The seed used for randomness
   /// - `eta`: The parameter determining the range of coefficients.
-  ///          Must be either 2 or 4. 
+  ///          Must be either 2 or 4.
   /// - `length`: The number of `Poly` objects
   /// - `nonce`: A unique value to ensure different outputs for the same `rho`.
-  /// 
+  ///
   /// Returns:
   /// - A random `PolyVec` object.
   ///
@@ -64,7 +66,7 @@ class PolyVec {
   }
 
   /// Applies the Number Theoretic Transform (NTT) to each `Poly` in the vector.
-  /// 
+  ///
   /// Returns:
   /// - A new `PolyVec` object with the transformed `Poly` objects.
   PolyVec ntt() {
@@ -73,10 +75,10 @@ class PolyVec {
   }
 
   /// Applies the pointwise Montgomery multiplication with a given `Poly` to each `Poly` in the vector.
-  /// 
+  ///
   /// Parameters:
   /// - `u`: The `Poly` object to multiply with.
-  /// 
+  ///
   /// Returns:
   /// - A new `PolyVec` object with the multiplied `Poly` object.
   PolyVec pointwiseMontgomery(Poly u) {
@@ -85,10 +87,10 @@ class PolyVec {
   }
 
   /// Multiplies a matrix of `PolyVec` objects pointwise using the Montgomery method.
-  /// 
+  ///
   /// Parameters:
   /// - `M`: A list of `PolyVec` objects representing the matrix.
-  /// 
+  ///
   /// Returns:
   /// - A new `PolyVec` object with the multiplied matrix.
   PolyVec mulMatrixPointwiseMontgomery(List<PolyVec> M) {
@@ -131,7 +133,7 @@ class PolyVec {
   }
 
   /// Applies the power rounding to each `Poly` in the vector.
-  /// 
+  ///
   /// Returns: A list of two `PolyVec` objects
   /// - index 0: Vector containing the rounded polynomials
   /// - index 1: Vector containing the remaining polynomials
@@ -147,35 +149,37 @@ class PolyVec {
   }
 
   /// Generates a random `PolyVec` using the given parameters and Gamma1 distribution.
-  /// 
+  ///
   /// Parameters:
   /// - `seed`: The seed used for randomness
   /// - `length`: The number of `Poly` objects
   /// - `gamma1`: The upper bound for the coefficients (should be 2^17 or 2^19).
   /// - `nonce`: A unique value to ensure different outputs for the same `seed`.
-  /// 
+  ///
   /// Returns:
   /// - A random `PolyVec` object.
-  /// 
+  ///
   /// Throws:
   /// - `IllegalGamma1` if `gamma1` is not 2^17 or 2^19.
-  static PolyVec randomVecGamma1(Uint8List seed, int length, int gamma1, int nonce) {
-    if(gamma1 != (1 << 17) && gamma1 != (1 << 19)) {
+  static PolyVec randomVecGamma1(
+      Uint8List seed, int length, int gamma1, int nonce) {
+    if (gamma1 != (1 << 17) && gamma1 != (1 << 19)) {
       throw IllegalGamma1(gamma1);
     }
 
     PolyVec z = PolyVec(length);
     for (int i = 0; i < length; i++) {
-      z.poly[i] = Poly.genRandomGamma1(seed, length * nonce + i, Dilithium.N, gamma1);
+      z.poly[i] =
+          Poly.genRandomGamma1(seed, length * nonce + i, Dilithium.N, gamma1);
     }
     return z;
   }
 
   /// Decomposes each `Poly` in the vector using the given Gamma2 parameter.
-  /// 
+  ///
   /// Parameters:
   /// - `gamma2`: The value of gamma2 (either (Dilithium.Q - 1) / 32 or (Dilithium.Q - 1) / 88).
-  /// 
+  ///
   /// Returns: A list of two `PolyVec` objects
   /// - index 0: Vector containing the rounded polynomials
   /// - index 1: Vector containing the large parts of the polynomials
@@ -191,7 +195,7 @@ class PolyVec {
   }
 
   /// Checks if any `Poly` in the vector exceeds the given bound.
-  /// 
+  ///
   /// Returns:
   /// - `true` if any `Poly` exceeds the bound
   /// - `false` otherwise

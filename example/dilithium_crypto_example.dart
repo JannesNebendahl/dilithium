@@ -4,15 +4,18 @@ import 'dart:typed_data';
 
 import 'package:dilithium_crypto/dilithium_crypto.dart';
 
-Uint8List randomSeed(){
+Uint8List randomSeed() {
   final random = Random.secure();
-  return Uint8List.fromList(List<int>.generate(Dilithium.SEEDBYTES, (_) => random.nextInt(256)));
+  return Uint8List.fromList(
+      List<int>.generate(Dilithium.SEEDBYTES, (_) => random.nextInt(256)));
 }
 
 void main() {
   // generate key pair
-  final DilithiumKeyPair keyPair = Dilithium.generateKeyPair(DilithiumParameterSpec.LEVEL3, randomSeed());  // Level2 or Level5 can be used as well
-  
+  final DilithiumKeyPair keyPair = Dilithium.generateKeyPair(
+      DilithiumParameterSpec.LEVEL3,
+      randomSeed()); // Level2 or Level5 can be used as well
+
   // create signature
   final Uint8List validMsg = utf8.encode("Valid Message");
   final Uint8List signature = Dilithium.sign(keyPair.privateKey, validMsg);
@@ -30,12 +33,16 @@ void main() {
   Uint8List publicKeyBytes = keyPair.publicKey.serialize();
   Uint8List privateKeyBytes = keyPair.privateKey.serialize();
 
-  print("Private Key:"); print(privateKeyBytes);
-  print("\nPublic Key:"); print(publicKeyBytes);
+  print("Private Key:");
+  print(privateKeyBytes);
+  print("\nPublic Key:");
+  print(publicKeyBytes);
 
   // recreate keys from byte representation
-  DilithiumPublicKey recreatedPublicKey = DilithiumPublicKey.deserialize(DilithiumParameterSpec.LEVEL3, publicKeyBytes);
-  DilithiumPrivateKey recreatedPrivateKey = DilithiumPrivateKey.deserialize(DilithiumParameterSpec.LEVEL3, privateKeyBytes);
+  DilithiumPublicKey recreatedPublicKey = DilithiumPublicKey.deserialize(
+      DilithiumParameterSpec.LEVEL3, publicKeyBytes);
+  DilithiumPrivateKey recreatedPrivateKey = DilithiumPrivateKey.deserialize(
+      DilithiumParameterSpec.LEVEL3, privateKeyBytes);
 
   // prove that the recreated keys are working
   final newMsg = utf8.encode("New Message");
@@ -43,6 +50,3 @@ void main() {
   isValid = Dilithium.verify(recreatedPublicKey, newSignature, newMsg);
   assert(isValid);
 }
-
-
-

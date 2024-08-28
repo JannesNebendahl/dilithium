@@ -29,44 +29,44 @@ class DilithiumParameterSpec {
 
   static const DilithiumParameterSpec LEVEL2 = DilithiumParameterSpec._(
     'Dilithium level 2 parameters', // Name
-    4,                              // k
-    4,                              // l
-    1 << 17,                        // gamma1
-    (Dilithium.Q - 1) ~/ 88,        // gamma2
-    39,                             // tau
-    13,                             // d
-    192,                            // chalentropy
-    2,                              // eta
-    78,                             // beta
-    80,                             // omega
+    4, // k
+    4, // l
+    1 << 17, // gamma1
+    (Dilithium.Q - 1) ~/ 88, // gamma2
+    39, // tau
+    13, // d
+    192, // chalentropy
+    2, // eta
+    78, // beta
+    80, // omega
   );
 
   static const DilithiumParameterSpec LEVEL3 = DilithiumParameterSpec._(
     'Dilithium level 3 parameters', // Name
-    6,                              // k
-    5,                              // l
-    1 << 19,                        // gamma1
-    (Dilithium.Q - 1) ~/ 32,        // gamma2
-    49,                             // tau
-    13,                             // d
-    225,                            // chalentropy
-    4,                              // eta
-    196,                            // beta
-    55,                             // omega
+    6, // k
+    5, // l
+    1 << 19, // gamma1
+    (Dilithium.Q - 1) ~/ 32, // gamma2
+    49, // tau
+    13, // d
+    225, // chalentropy
+    4, // eta
+    196, // beta
+    55, // omega
   );
 
   static const DilithiumParameterSpec LEVEL5 = DilithiumParameterSpec._(
     'Dilithium level 5 parameters', // Name
-    8,                              // k
-    7,                              // l
-    1 << 19,                        // gamma1
-    (Dilithium.Q - 1) ~/ 32,        // gamma2
-    60,                             // tau
-    13,                             // d
-    257,                            // chalentropy
-    2,                              // eta
-    120,                            // beta
-    75,                             // omega
+    8, // k
+    7, // l
+    1 << 19, // gamma1
+    (Dilithium.Q - 1) ~/ 32, // gamma2
+    60, // tau
+    13, // d
+    257, // chalentropy
+    2, // eta
+    120, // beta
+    75, // omega
   );
 
   static DilithiumParameterSpec getSpecForSecurityLevel(int level) {

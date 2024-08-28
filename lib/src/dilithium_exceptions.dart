@@ -16,9 +16,13 @@ class IllegalGamma2 extends ArgumentError {
 }
 
 class InvalidSeedLength extends ArgumentError {
-  InvalidSeedLength(int actualLength) : super('Invalid seed length, seed needs to be ${Dilithium.SEEDBYTES} bytes long but is $actualLength bytes long');
+  InvalidSeedLength(int actualLength)
+      : super(
+            'Invalid seed length, seed needs to be ${Dilithium.SEEDBYTES} bytes long but is $actualLength bytes long');
 }
 
 class PolyVectorLengthMismatch extends ArgumentError {
-  PolyVectorLengthMismatch(int lengthA, lengthB) : super('The lengths of the two PolyVecs do not match: $lengthA != $lengthB');
+  PolyVectorLengthMismatch(int lengthA, lengthB)
+      : super(
+            'The lengths of the two PolyVecs do not match: $lengthA != $lengthB');
 }

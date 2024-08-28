@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:typed_data';
 import 'package:dilithium_crypto/dilithium_crypto.dart';
 import 'package:dilithium_crypto/src/packing_utils.dart';

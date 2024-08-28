@@ -157,9 +157,9 @@ class Dilithium {
   /// Returns:
   /// - The signature as a `Uint8List`.
   static Uint8List sign(DilithiumPrivateKey prv, Uint8List M) {
-    var spec = prv.spec;
-    var CRYPTO_BYTES = Utils.getSigLength(spec);
-    var sig = Uint8List(CRYPTO_BYTES);
+    final spec = prv.spec;
+    final cryptoBytes = Utils.getSigLength(spec);
+    var sig = Uint8List(cryptoBytes);
 
     var conc = Utils.concat([prv.tr, M]);
     var mu = Utils.mucrh(conc);
@@ -234,10 +234,10 @@ class Dilithium {
   /// Returns:
   /// - `true` if the signature is valid, `false` otherwise.
   static bool verify(DilithiumPublicKey pk, Uint8List sig, Uint8List M) {
-    var spec = pk.spec;
-    var CRYPTO_BYTES = Utils.getSigLength(spec);
+    final spec = pk.spec;
+    final cryptoBytes = Utils.getSigLength(spec);
 
-    if (sig.length != CRYPTO_BYTES) {
+    if (sig.length != cryptoBytes) {
       return false;
     }
 

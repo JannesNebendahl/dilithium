@@ -128,38 +128,44 @@ class PackingUtils {
   /// - `IllegalEta` if `eta` is not 2 or 4.
   static Uint8List packPrvKey(int eta, Uint8List rho, Uint8List tr, Uint8List K, PolyVec t0, PolyVec s1, PolyVec s2) {
     int off = 0;
-    int POLYETA_PACKEDBYTES;
+    int polyEtaPackedBytes;
     switch (eta) {
       case 2:
-        POLYETA_PACKEDBYTES = 96;
+        polyEtaPackedBytes = 96;
         break;
       case 4:
-        POLYETA_PACKEDBYTES = 128;
+        polyEtaPackedBytes = 128;
         break;
       default:
         throw IllegalEta(eta);
     }
 
-    final int CRYPTO_SECRETKEYBYTES = (2 * Dilithium.SEEDBYTES + Dilithium.CRHBYTES + s1.length * POLYETA_PACKEDBYTES + s2.length * POLYETA_PACKEDBYTES + s2.length * Dilithium.POLYT0_PACKEDBYTES);
-    Uint8List buf = Uint8List(CRYPTO_SECRETKEYBYTES);
+    final int cryptoSecreteKeyByte = (2 * Dilithium.SEEDBYTES + Dilithium.CRHBYTES + s1.length * polyEtaPackedBytes + s2.length * polyEtaPackedBytes + s2.length * Dilithium.POLYT0_PACKEDBYTES);
+    Uint8List buf = Uint8List(cryptoSecreteKeyByte);
 
-    for (int i = 0; i < Dilithium.SEEDBYTES; i++) buf[off + i] = rho[i];
+    for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
+      buf[off + i] = rho[i];
+    }
     off += Dilithium.SEEDBYTES;
 
-    for (int i = 0; i < Dilithium.SEEDBYTES; i++) buf[off + i] = K[i];
+    for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
+      buf[off + i] = K[i];
+    }
     off += Dilithium.SEEDBYTES;
 
-    for (int i = 0; i < Dilithium.CRHBYTES; i++) buf[off + i] = tr[i];
+    for (int i = 0; i < Dilithium.CRHBYTES; i++) {
+      buf[off + i] = tr[i];
+    }
     off += Dilithium.CRHBYTES;
 
     for (int i = 0; i < s1.length; i++) {
       s1.poly[i].etapack(eta, buf, off);
-      off += POLYETA_PACKEDBYTES;
+      off += polyEtaPackedBytes;
     }
 
     for (int i = 0; i < s2.length; i++) {
       s2.poly[i].etapack(eta, buf, off);
-      off += POLYETA_PACKEDBYTES;
+      off += polyEtaPackedBytes;
     }
 
     for (int i = 0; i < t0.length; i++) {
@@ -178,10 +184,12 @@ class PackingUtils {
   /// Returns:
   /// - A `Uint8List` object containing the packed public key.
   static Uint8List packPubKey(Uint8List rho, PolyVec t) {
-    int CRYPTO_PUBLICKEYBYTES = Dilithium.SEEDBYTES + t.length * Dilithium.POLYT1_PACKEDBYTES;
+    int cryptoPublicBytes = Dilithium.SEEDBYTES + t.length * Dilithium.POLYT1_PACKEDBYTES;
 
-    Uint8List pk = Uint8List(CRYPTO_PUBLICKEYBYTES);
-    for (int i = 0; i < Dilithium.SEEDBYTES; i++) pk[i] = rho[i];
+    Uint8List pk = Uint8List(cryptoPublicBytes);
+    for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
+      pk[i] = rho[i];
+    }
 
     for (int i = 0; i < t.length; i++) {
       t.poly[i].t1pack(pk, Dilithium.SEEDBYTES + i * Dilithium.POLYT1_PACKEDBYTES);
@@ -199,19 +207,23 @@ class PackingUtils {
   /// - `z`: A `PolyVec` object representing the polynomial vector `z`.
   /// - `h`: A `PolyVec` object representing the polynomial vector `h`.
   static void packSig(int gamma1, int omega, Uint8List sig, Uint8List c, PolyVec z, PolyVec h) {
-    int POLYZ_PACKEDBYTES = getPolyZPackedBytes(gamma1);
+    int polyZPackedBytes = getPolyZPackedBytes(gamma1);
 
     int off = 0;
-    for (int i = 0; i < Dilithium.SEEDBYTES; i++) sig[i] = c[i];
+    for (int i = 0; i < Dilithium.SEEDBYTES; i++) {
+      sig[i] = c[i];
+    }
     off += Dilithium.SEEDBYTES;
 
     for (int i = 0; i < z.length; i++) {
       z.poly[i].zpack(gamma1, sig, off);
-      off += POLYZ_PACKEDBYTES;
+      off += polyZPackedBytes;
     }
 
     // Encode h
-    for (int i = 0; i < omega + h.length; i++) sig[off + i] = 0;
+    for (int i = 0; i < omega + h.length; i++) {
+      sig[off + i] = 0;
+    }
     int k = 0;
     for (int i = 0; i < h.length; i++) {
       for (int j = 0; j < Dilithium.N; j++) {
@@ -231,11 +243,11 @@ class PackingUtils {
   /// - `w`: A `PolyVec` object representing the polynomial vector `w`.
   /// - `sig`: A `Uint8List` to store the packed `w1` components.
   static void packw1(int gamma2, PolyVec w, Uint8List sig) {
-    int POLYW1_PACKEDBYTES = getPolyW1PackedBytes(gamma2);
+    int polyW1Packedbytes = getPolyW1PackedBytes(gamma2);
     int off = 0;
     for (int i = 0; i < w.length; i++) {
       w.poly[i].w1pack(gamma2, sig, off);
-      off += POLYW1_PACKEDBYTES;
+      off += polyW1Packedbytes;
     }
   }
 
@@ -306,7 +318,7 @@ class PackingUtils {
   }
 
   static DilithiumPrivateKey unpackPrivateKey(DilithiumParameterSpec parameterSpec, Uint8List bytes) {
-    final int POLYETA_PACKEDBYTES = getPolyEtaPackedBytes(parameterSpec.eta);
+    final int polyEtaPackedBytes = getPolyEtaPackedBytes(parameterSpec.eta);
 
     int off = 0;
     Uint8List rho = Uint8List.sublistView(bytes, off, off + Dilithium.SEEDBYTES);
@@ -321,13 +333,13 @@ class PackingUtils {
     PolyVec s1 = PolyVec(parameterSpec.l);
     for (int i = 0; i < parameterSpec.l; i++) {
       s1.poly[i] = _etaunpack(parameterSpec.eta, bytes, off);
-      off += POLYETA_PACKEDBYTES;
+      off += polyEtaPackedBytes;
     }
 
     PolyVec s2 = PolyVec(parameterSpec.k);
     for (int i = 0; i < parameterSpec.k; i++) {
       s2.poly[i] = _etaunpack(parameterSpec.eta, bytes, off);
-      off += POLYETA_PACKEDBYTES;
+      off += polyEtaPackedBytes;
     }
 
     PolyVec t0 = PolyVec(parameterSpec.k);

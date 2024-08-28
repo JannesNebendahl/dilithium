@@ -111,17 +111,23 @@ class PolyVec {
 
   /// Reduces each `Poly` in the vector by modulo `Dilithium.Q`.
   void reduce() {
-    poly.forEach((p) => p.reduce());
+    for (var p in poly) {
+      p.reduce();
+    }
   }
 
   /// Applies the inverse NTT to each `Poly` in the vector and converts to Montgomery form.
   void invnttTomont() {
-    poly.forEach((p) => p.invnttTomont());
+    for (var p in poly) {
+      p.invnttTomont();
+    }
   }
 
   /// Adds `Dilithium.Q` to each `Poly` in the vector and reduces by modulo `Dilithium.Q`.
   void caddq() {
-    poly.forEach((p) => p.caddq());
+    for (var p in poly) {
+      p.caddq();
+    }
   }
 
   /// Applies the power rounding to each `Poly` in the vector.

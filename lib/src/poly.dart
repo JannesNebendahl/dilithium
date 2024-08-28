@@ -89,11 +89,11 @@ class Poly {
   /// Throws:
   /// - `IllegalEta` if `eta` is not 2 or 4.
   static Poly genRandom(Uint8List rho, int eta, int nonce) {
-    int POLY_UNIFORM_ETA_NBLOCKS;
+    int polyUniformEtaNBlocks;
     if (eta == 2) {
-      POLY_UNIFORM_ETA_NBLOCKS = ((136 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
+      polyUniformEtaNBlocks = ((136 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
     } else if (eta == 4) {
-      POLY_UNIFORM_ETA_NBLOCKS = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
+      polyUniformEtaNBlocks = ((227 + Dilithium.STREAM256_BLOCKBYTES - 1) ~/ Dilithium.STREAM256_BLOCKBYTES);
     } else {
       throw IllegalEta(eta);
     }
@@ -107,7 +107,7 @@ class Poly {
     non[1] = ((nonce >> 8) & 0xFF);
     s.update(non, 0, 2);
 
-    var bb = Uint8List(POLY_UNIFORM_ETA_NBLOCKS * Dilithium.STREAM256_BLOCKBYTES);
+    var bb = Uint8List(polyUniformEtaNBlocks * Dilithium.STREAM256_BLOCKBYTES);
     s.doOutput(bb, 0, bb.length);
 
     Poly pre = Poly(Dilithium.N);
@@ -212,9 +212,9 @@ class Poly {
   /// Returns:
   /// - A polynomial `Poly` with coefficients sampled uniformly at random.
   static Poly genUniformRandom(Uint8List rho, int nonce) {
-    final int POLY_UNIFORM_NBLOCKS = ((768 + Dilithium.STREAM128_BLOCKBYTES - 1) ~/ Dilithium.STREAM128_BLOCKBYTES);
+    final int polyUniformNBlocks = ((768 + Dilithium.STREAM128_BLOCKBYTES - 1) ~/ Dilithium.STREAM128_BLOCKBYTES);
     int ctr, off;
-    int buflen = POLY_UNIFORM_NBLOCKS * Dilithium.STREAM128_BLOCKBYTES;
+    int buflen = polyUniformNBlocks * Dilithium.STREAM128_BLOCKBYTES;
     var buf = Uint8List(buflen + 2);
 
     var s = SHAKEDigest(128);

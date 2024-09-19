@@ -1,5 +1,6 @@
 [![Tests](https://github.com/JannesNebendahl/dilithium/actions/workflows/tests.yml/badge.svg)](https://github.com/JannesNebendahl/dilithium/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/github/JannesNebendahl/dilithium/graph/badge.svg?token=22U0DA66BD)](https://codecov.io/github/JannesNebendahl/dilithium)  
+[![codecov](https://codecov.io/github/JannesNebendahl/dilithium/graph/badge.svg?token=22U0DA66BD)](https://codecov.io/github/JannesNebendahl/dilithium)
+[![pub package](https://img.shields.io/pub/v/dilithium_crypto.svg)](https://pub.dev/packages/dilithium_crypto)  
 Dart implementation of the [Dilithium](https://www.pq-crystals.org/dilithium/) signature scheme, which supports all 3 security levels (2, 3, 5)
 
 **Note AES Not Supported:** This Dart implementation of Dilithium does not support the AES variant. It only supports the SHAKE-based version of the algorithm.

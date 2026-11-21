@@ -1,20 +1,20 @@
 name: dilithium_crypto
-description: Dart implementation of the Dilithium signature scheme, which supports all 3 security levels (2, 3, 5). 
-version: 1.0.2
+description: Dart implementation of the Dilithium signature scheme, which supports all 3 security levels (2, 3, 5).
+version: 1.1.0
 repository: https://github.com/JannesNebendahl/dilithium
-topics: 
+topics:
   - cryptography
-  - signature 
-  - dilithium 
-  - post-quantum 
+  - signature
+  - dilithium
+  - post-quantum
 
 environment:
   sdk: ^3.4.1
 
 dependencies:
-  pointycastle: ^3.9.1
+  pointycastle: ^4.0.0
 
 dev_dependencies:
-  lints: ^3.0.0
+  lints: ^4.0.0
   test: ^1.24.0
   crypto: ^3.0.0
